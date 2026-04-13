@@ -1,0 +1,13 @@
+// Gör# Örnek 08 — Fibonacci
+// Fibonacci dizisinin ilk 10 terimini hesapla
+
+fonksiyon fibonacci(n: sayı): sayı {
+    eğer n küçükEşittir 1 {
+        döndür n;
+    }
+    döndür fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+tekrarla (i: sayı 0 olsun; i küçüktür 10; i = i + 1) {
+    fibonacci(i) yeniSatıraYazdır;
+}

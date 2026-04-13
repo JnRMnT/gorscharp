@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rid: [win-x64, linux-x64, osx-x64, osx-arm64]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java (for ANTLR)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/*.slnx') }}
+
+      - name: Restore
+        run: dotnet restore GorSharp.slnx
+
+      - name: Test
+        run: dotnet test GorSharp.slnx --configuration Release --no-restore
+
+      - name: Publish CLI (${{ matrix.rid }})
+        run: >
+          dotnet publish src/GorSharp.CLI/GorSharp.CLI.csproj
+          --configuration Release
+          --runtime ${{ matrix.rid }}
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:PublishTrimmed=true
+          -o ./publish/${{ matrix.rid }}
+
+      - name: Archive (${{ matrix.rid }})
+        run: |
+          cd publish/${{ matrix.rid }}
+          if [[ "${{ matrix.rid }}" == win-* ]]; then
+            zip -r ../../gorsharp-${{ github.ref_name }}-${{ matrix.rid }}.zip .
+          else
+            tar czf ../../gorsharp-${{ github.ref_name }}-${{ matrix.rid }}.tar.gz .
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gorsharp-${{ matrix.rid }}
+          path: gorsharp-${{ github.ref_name }}-${{ matrix.rid }}.*
+
+  create-release:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: artifacts/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

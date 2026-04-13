@@ -1,0 +1,46 @@
+name: VSIX Publish
+
+on:
+  push:
+    tags: [ 'vsix-v*' ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build-and-package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Extract version from tag
+        id: version
+        shell: pwsh
+        run: |
+          if ("${{ github.ref_name }}" -like "vsix-v*") {
+            $v = "${{ github.ref_name }}".Substring(6)
+            # Normalize to 4-part assembly version if needed.
+            $parts = $v.Split('.')
+            while ($parts.Count -lt 4) { $parts += '0' }
+            $v4 = ($parts[0..3] -join '.')
+            "VERSION=$v4" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          }
+
+      - name: Build Visual Studio extension project
+        shell: pwsh
+        run: dotnet build src/GorSharp.VisualStudio/GorSharp.VisualStudio.csproj -c Release
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gorsharp-visualstudio-vsix
+          path: src/GorSharp.VisualStudio/artifacts/GorSharp.VisualStudio.vsix
+

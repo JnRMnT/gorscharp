@@ -1,0 +1,65 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <IsPackable>false</IsPackable>
+    <GorCliProjectPath>$(MSBuildProjectDirectory)\..\src\GorSharp.CLI\GorSharp.CLI.csproj</GorCliProjectPath>
+  </PropertyGroup>
+
+  <!-- All .gör files are shown in Solution Explorer -->
+  <ItemGroup>
+    <None Include="*.gör" />
+    <None Include=".vscode\**\*" />
+  </ItemGroup>
+
+  <!--
+    Every .gör file gets a companion .uretilenkod.cs declared as Compile.
+    DependentUpon nests the generated file under its parent .gör in Solution Explorer.
+    Only 01-hello.gör is the entry point compiled into the exe — the others compile
+    as isolated top-level-statement files so they must NOT define duplicate entry points.
+    We compile all of them so IntelliSense works for every file.
+  -->
+  <ItemGroup>
+    <GorSource Include="01-hello.gör">
+      <EntryPoint>true</EntryPoint>
+    </GorSource>
+    <GorSource Include="02-controlflow.gör" />
+    <GorSource Include="03-functions.gör" />
+  </ItemGroup>
+
+  <!--
+    01-hello.uretilenkod.cs is compiled as the exe entry point.
+    02 and 03 companions are Content items — they appear in Solution Explorer,
+    are nested under their parent .gör via DependentUpon, but are NOT compiled
+    (avoids top-level-statement CS8802 clash).  Their content is still readable
+    and opens in the C# editor for full IntelliSense on generated code.
+  -->
+  <ItemGroup>
+    <Compile Include="01-hello.uretilenkod.cs">
+      <DependentUpon>01-hello.gör</DependentUpon>
+      <AutoGen>true</AutoGen>
+      <DesignTime>true</DesignTime>
+      <Visible>true</Visible>
+    </Compile>
+    <Content Include="02-controlflow.uretilenkod.cs">
+      <DependentUpon>02-controlflow.gör</DependentUpon>
+      <AutoGen>true</AutoGen>
+      <Visible>true</Visible>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="03-functions.uretilenkod.cs">
+      <DependentUpon>03-functions.gör</DependentUpon>
+      <AutoGen>true</AutoGen>
+      <Visible>true</Visible>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="GenerateGorCode" BeforeTargets="CoreCompile">
+    <Error Condition="!Exists('$(GorCliProjectPath)')" Text="GorSharp CLI project was not found: $(GorCliProjectPath)" />
+    <Exec Command="dotnet run --project &quot;$(GorCliProjectPath)&quot; -- transpile &quot;%(GorSource.Identity)&quot; -o &quot;%(GorSource.RootDir)%(GorSource.Directory)%(GorSource.Filename).uretilenkod.cs&quot;" />
+  </Target>
+</Project>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable">
+  <Extern href="stdidcmd.h" />
+  <Extern href="vsshlids.h" />
+
+  <Commands package="guidGorSharpPackage">
+    <Groups>
+      <Group guid="guidGorSharpCmdSet" id="GorSharpGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE" />
+      </Group>
+    </Groups>
+
+    <Buttons>
+      <Button guid="guidGorSharpCmdSet" id="cmdidConvertCsToGor" priority="0x0100" type="Button">
+        <Parent guid="guidGorSharpCmdSet" id="GorSharpGroup" />
+        <Strings>
+          <ButtonText>Convert to Gor#</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+
+  <Symbols>
+    <GuidSymbol name="guidGorSharpPackage" value="{f2a8c0fd-fec7-41f5-8f6b-a8ac2f5e6508}" />
+
+    <GuidSymbol name="guidGorSharpCmdSet" value="{b4a74652-5176-4843-94d7-4150185a3f48}">
+      <IDSymbol name="GorSharpGroup" value="0x1020" />
+      <IDSymbol name="cmdidConvertCsToGor" value="0x0100" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>

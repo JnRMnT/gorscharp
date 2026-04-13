@@ -1,0 +1,7 @@
+{
+    "files.encoding": "utf8",
+    "files.associations": {
+        "*.gör": "plaintext"
+    },
+    "dotnet.defaultSolution": "GorSharp.slnx"
+}

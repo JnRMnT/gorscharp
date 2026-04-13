@@ -1,0 +1,23 @@
+# EditorConfig — Gör# Project
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = crlf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{cs,csx}]
+dotnet_sort_system_directives_first = true
+csharp_using_directive_placement = outside_namespace
+
+[*.{json,yml,yaml}]
+indent_size = 2
+
+[*.g4]
+indent_size = 4
+
+[*.md]
+trim_trailing_whitespace = false

@@ -1,0 +1,20 @@
+// Gör# Örnek 04 — Fonksiyonlar
+// Fonksiyon tanımlama ve çağırma
+
+fonksiyon topla(a: sayı, b: sayı): sayı {
+    döndür a + b;
+}
+
+fonksiyon çarp(a: sayı, b: sayı): sayı {
+    döndür a * b;
+}
+
+fonksiyon selamla() {
+    "Merhaba Gör#!" yeniSatıraYazdır;
+}
+
+// Fonksiyon çağrıları
+selamla();
+sonuç: sayı topla(3, 5) olsun;
+sonuç yeniSatıraYazdır;
+çarp(4, 7) yeniSatıraYazdır;

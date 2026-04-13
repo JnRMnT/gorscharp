@@ -1,0 +1,14 @@
+// Gör# Örnek 03 — Döngüler
+// while ve for döngülerini gösterir
+
+// While döngüsü: 5'ten 1'e geri sayma
+sayaç: sayı 5 olsun;
+döngü sayaç büyüktür 0 {
+    sayaç yeniSatıraYazdır;
+    sayaç = sayaç - 1;
+}
+
+// For döngüsü: 0'dan 4'e kadar yazdırma
+tekrarla (i: sayı 0 olsun; i küçüktür 5; i = i + 1) {
+    i yeniSatıraYazdır;
+}

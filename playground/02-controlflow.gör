@@ -1,0 +1,15 @@
+puan: sayı 75 olsun;
+
+ eğer puan büyükEşittir 90 {
+    "Harika" yeniSatıraYazdır;
+} yoksa eğer puan büyükEşittir 70 {
+    "İyi" yeniSatıraYazdır;
+} değilse {
+    "Geliştir" yeniSatıraYazdır;
+}
+
+ i: sayı 0 olsun;
+ döngü i küçüktür 3 {
+    i yeniSatıraYazdır;
+    i = i + 1;
+}

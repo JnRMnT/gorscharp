@@ -1,0 +1,49 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "GorSharp: Build Solution",
+      "type": "shell",
+      "command": "dotnet",
+      "args": ["build", "${workspaceFolder}/GorSharp.slnx"],
+      "group": "build",
+      "problemMatcher": ["$msCompile"]
+    },
+    {
+      "label": "GorSharp: Test Solution",
+      "type": "shell",
+      "command": "dotnet",
+      "args": ["test", "${workspaceFolder}/GorSharp.slnx", "--no-build"],
+      "group": "test",
+      "problemMatcher": ["$msCompile"]
+    },
+    {
+      "label": "GorSharp: Transpile Active .gör",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder}/src/GorSharp.CLI/GorSharp.CLI.csproj",
+        "--",
+        "transpile",
+        "${file}"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "GorSharp: Run Active .gör",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder}/src/GorSharp.CLI/GorSharp.CLI.csproj",
+        "--",
+        "run",
+        "${file}"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

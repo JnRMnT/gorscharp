@@ -1,0 +1,6 @@
+fonksiyon topla(a: sayı, b: sayı): sayı {
+    döndür a + b;
+}
+
+sonuç: sayı topla(3, 5) olsun;
+sonuç yeniSatıraYazdır;

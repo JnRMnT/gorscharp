@@ -1,0 +1,19 @@
+// Gör# Örnek 06 — Break ve Continue
+// Döngü kontrol ifadeleri
+
+// Break: Çift sayı bulunca dur
+tekrarla (i: sayı 1 olsun; i küçükEşittir 10; i = i + 1) {
+    eğer i % 2 eşittir 0 {
+        i yazdır;
+        " ilk çift sayı" yeniSatıraYazdır;
+        kır;
+    }
+}
+
+// Continue: Tek sayıları atla, çift sayıları yazdır
+tekrarla (i: sayı 1 olsun; i küçükEşittir 10; i = i + 1) {
+    eğer i % 2 eşitDeğildir 0 {
+        devam;
+    }
+    i yeniSatıraYazdır;
+}

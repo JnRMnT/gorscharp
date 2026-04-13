@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name>GorSharp Console Project</Name>
+    <Description>Create a new executable GorSharp project with .gör source and generated C# companion output.</Description>
+    <ProjectType>CSharp</ProjectType>
+    <ProjectSubType>GorSharp</ProjectSubType>
+    <DefaultName>GorSharpApp</DefaultName>
+    <CreateNewFolder>true</CreateNewFolder>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <SortOrder>1000</SortOrder>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="GorSharp.Template.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="$safeprojectname$.gör">Program.gör</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

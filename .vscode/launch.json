@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Gör# CLI — transpile",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/GorSharp.CLI/bin/Debug/net10.0/GorSharp.CLI.dll",
+            "args": ["transpile", "${workspaceFolder}/samples/01-merhaba.gör"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Gör# CLI — run",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/GorSharp.CLI/bin/Debug/net10.0/GorSharp.CLI.dll",
+            "args": ["run", "${workspaceFolder}/samples/01-merhaba.gör"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Gör# CLI — transpile (current file)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/GorSharp.CLI/bin/Debug/net10.0/GorSharp.CLI.dll",
+            "args": ["transpile", "${file}"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        }
+    ]
+}
+

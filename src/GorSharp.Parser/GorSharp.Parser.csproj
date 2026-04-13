@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);CS3021</NoWarn>
+    <Antlr4Version>4.13.1</Antlr4Version>
+    <Antlr4JarPath>$(MSBuildProjectDirectory)\..\..\tools\antlr-$(Antlr4Version)-complete.jar</Antlr4JarPath>
+    <GrammarFile>$(MSBuildProjectDirectory)\..\..\grammar\GorSharp.g4</GrammarFile>
+    <Antlr4OutputDir>$(MSBuildProjectDirectory)\Generated</Antlr4OutputDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GorSharp.Core\GorSharp.Core.csproj" />
+    <ProjectReference Include="..\GorSharp.Morphology\GorSharp.Morphology.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+  </ItemGroup>
+
+  <!-- Download ANTLR jar if not present -->
+  <Target Name="DownloadAntlrJar" BeforeTargets="GenerateAntlr" Condition="!Exists('$(Antlr4JarPath)')">
+    <MakeDir Directories="$(MSBuildProjectDirectory)\..\..\tools" />
+    <Message Importance="high" Text="ANTLR jar bulunamadi, indiriliyor: $(Antlr4JarPath)" />
+    <Exec Command="curl -sL -o &quot;$(Antlr4JarPath)&quot; https://www.antlr.org/download/antlr-$(Antlr4Version)-complete.jar" />
+  </Target>
+
+  <!-- Regenerate lexer/parser/visitor when grammar changes -->
+  <Target Name="GenerateAntlr" BeforeTargets="CoreCompile"
+          Inputs="$(GrammarFile)"
+          Outputs="$(Antlr4OutputDir)\GorSharpParser.cs">
+    <Message Importance="high" Text="ANTLR: GorSharp.g4 ? Generated/ (v$(Antlr4Version))" />
+    <Exec Command="java -jar &quot;$(Antlr4JarPath)&quot; -Dlanguage=CSharp -visitor -no-listener -package GorSharp.Parser -o &quot;$(Antlr4OutputDir)&quot; &quot;$(GrammarFile)&quot;" />
+  </Target>
+
+</Project>
+

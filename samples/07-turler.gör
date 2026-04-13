@@ -1,0 +1,27 @@
+// Gör# Örnek 07 — Tüm Türler
+// Gör#'ta desteklenen veri türleri
+
+// Tam sayı
+yaş: sayı 21 olsun;
+
+// Ondalıklı sayı
+boy: ondalık 1.75 olsun;
+
+// Metin
+isim: metin "Ali" olsun;
+
+// Mantıksal
+öğrenci: mantık doğru olsun;
+
+// Tür çıkarımı
+x 42 olsun;
+y 3.14 olsun;
+z "merhaba" olsun;
+t doğru olsun;
+n boş olsun;
+
+// Yazdırma
+isim yeniSatıraYazdır;
+yaş yeniSatıraYazdır;
+boy yeniSatıraYazdır;
+öğrenci yeniSatıraYazdır;

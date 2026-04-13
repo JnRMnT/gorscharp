@@ -1,0 +1,16 @@
+// Gör# Örnek 02 — Koşullu ifadeler
+// if/else if/else yapısını gösterir
+
+puan: sayı 75 olsun;
+
+eğer puan büyükEşittir 90 {
+    "Harf notu: AA" yeniSatıraYazdır;
+} yoksa eğer puan büyükEşittir 80 {
+    "Harf notu: BA" yeniSatıraYazdır;
+} yoksa eğer puan büyükEşittir 70 {
+    "Harf notu: BB" yeniSatıraYazdır;
+} yoksa eğer puan büyükEşittir 60 {
+    "Harf notu: CB" yeniSatıraYazdır;
+} değilse {
+    "Harf notu: FF" yeniSatıraYazdır;
+}

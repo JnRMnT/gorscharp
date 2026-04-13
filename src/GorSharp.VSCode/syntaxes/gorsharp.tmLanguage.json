@@ -1,0 +1,130 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Gör#",
+  "scopeName": "source.gorsharp",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#types" },
+    { "include": "#operators" },
+    { "include": "#literals" },
+    { "include": "#functions" },
+    { "include": "#identifiers" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.gorsharp",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.gorsharp",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.gorsharp",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.gorsharp",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.float.gorsharp",
+          "match": "\\b\\d+\\.\\d+\\b"
+        },
+        {
+          "name": "constant.numeric.integer.gorsharp",
+          "match": "\\b\\d+\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.gorsharp",
+          "match": "\\b(eğer|değilse|yoksa\\s+eğer|döngü|tekrarla|her|döndür|kır|kıır|devam|dene|hata_varsa|sonunda|başla)\\b"
+        },
+        {
+          "name": "keyword.other.gorsharp",
+          "match": "\\b(olsun|yazdır|yeniSatıraYazdır|oku|okuSatır|fonksiyon|sınıf|kurucu|bu|miras|sonra|ile)\\b"
+        },
+        {
+          "name": "keyword.operator.assignment.gorsharp",
+          "match": "\\b(arttır|azalt|çarp|böl)\\b"
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "support.type.gorsharp",
+          "match": "\\b(sayı|ondalık|metin|mantık|karakter|liste|sözlük|dizi|nesne|boşluk)\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.comparison.gorsharp",
+          "match": "\\b(eşittir|eşitDeğildir|büyüktür|küçüktür|büyükEşittir|küçükEşittir)\\b"
+        },
+        {
+          "name": "keyword.operator.logical.gorsharp",
+          "match": "\\b(ve|veya|değil)\\b"
+        },
+        {
+          "name": "keyword.operator.arithmetic.gorsharp",
+          "match": "[+\\-*/%]"
+        },
+        {
+          "name": "keyword.operator.assignment.gorsharp",
+          "match": "(=|\\+=|\\-=|\\*=|/=)"
+        }
+      ]
+    },
+    "literals": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.gorsharp",
+          "match": "\\b(doğru|yanlış)\\b"
+        },
+        {
+          "name": "constant.language.null.gorsharp",
+          "match": "\\b(boş)\\b"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.gorsharp",
+          "match": "\\b([\\wöüşçığİÖÜŞÇĞ]+)\\s*(?=\\()"
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "variable.other.gorsharp",
+          "match": "\\b[\\wöüşçığİÖÜŞÇĞ]+\\b"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": ["build", "${workspaceFolder}/GorSharp.slnx"],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "test",
+            "command": "dotnet",
+            "type": "process",
+            "args": ["test", "${workspaceFolder}/GorSharp.slnx", "--no-build"],
+            "problemMatcher": "$msCompile",
+            "group": "test",
+            "dependsOn": "build"
+        },
+        {
+            "label": "test-integration",
+            "command": "dotnet",
+            "type": "process",
+            "args": ["test", "${workspaceFolder}/GorSharp.slnx", "--no-build", "--filter", "FullyQualifiedName~Integration"],
+            "problemMatcher": "$msCompile",
+            "group": "test",
+            "dependsOn": "build"
+        },
+        {
+            "label": "transpile-sample",
+            "command": "dotnet",
+            "type": "process",
+            "args": ["run", "--project", "${workspaceFolder}/src/GorSharp.CLI", "--", "transpile", "${workspaceFolder}/samples/01-merhaba.gör"],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}

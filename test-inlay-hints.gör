@@ -1,0 +1,17 @@
+// İnlay Hints Test Dosyası
+// Türkçe değişken deklarasyonları - tip ipuçları görmek için
+
+x 5 olsun;
+y 10.5 olsun;
+isim "Ahmet" olsun;
+aktif evet olsun;
+
+liste [1, 2, 3, 4, 5] olsun;
+
+// Türkçe işlem
+topla (a, b) {
+    döndür a ile b;
+}
+
+sonuc topla(x, y);
+yeniSatıraYazdır(sonuc);

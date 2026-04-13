@@ -1,0 +1,26 @@
+<Solution>
+  <StartupProject Path="playground/GorSharp.Playground.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/GorSharp.CLI/GorSharp.CLI.csproj" />
+    <Project Path="src/GorSharp.Core/GorSharp.Core.csproj" />
+    <Project Path="src/GorSharp.LanguageServer/GorSharp.LanguageServer.csproj" />
+    <Project Path="src/GorSharp.Morphology/GorSharp.Morphology.csproj" />
+    <Project Path="src/GorSharp.Parser/GorSharp.Parser.csproj" />
+    <Project Path="src/GorSharp.Transpiler/GorSharp.Transpiler.csproj" />
+    <Project Path="src/GorSharp.VSCode/GorSharp.VSCode.esproj">
+      <Build />
+      <Deploy />
+    </Project>
+    <Project Path="src/GorSharp.VisualStudio/GorSharp.VisualStudio.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GorSharp.Core.Tests/GorSharp.Core.Tests.csproj" />
+    <Project Path="tests/GorSharp.Integration.Tests/GorSharp.Integration.Tests.csproj" />
+    <Project Path="tests/GorSharp.Morphology.Tests/GorSharp.Morphology.Tests.csproj" />
+    <Project Path="tests/GorSharp.Parser.Tests/GorSharp.Parser.Tests.csproj" />
+    <Project Path="tests/GorSharp.Transpiler.Tests/GorSharp.Transpiler.Tests.csproj" />
+  </Folder>
+  <Folder Name="/playground/">
+    <Project Path="playground/GorSharp.Playground.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,118 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>GorSharp.VisualStudio</RootNamespace>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);NU1603;NU1701</NoWarn>
+
+    <!-- VSIX Properties -->
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <GenerateVsixContainer>true</GenerateVsixContainer>
+    <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
+    <IncludeCopyLocalOutputInVSIXContainer>true</IncludeCopyLocalOutputInVSIXContainer>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <StartAction>Program</StartAction>
+    <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
+    <StartArguments>/rootsuffix Exp /log &quot;$(LocalAppData)\GorSharp\Logs\ActivityLog.exp.xml&quot;</StartArguments>
+    <StartWorkingDirectory>$(SolutionDir)</StartWorkingDirectory>
+    <VSSDKTargetPlatformRegRootSuffix>Exp</VSSDKTargetPlatformRegRootSuffix>
+    <AutoDeployToExperimentalInstance>true</AutoDeployToExperimentalInstance>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.12.433" ExcludeAssets="runtime" NoWarn="NU1604" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.12.215" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Framework" Version="17.12.215" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.12.*">
+      <GeneratePathProperty>true</GeneratePathProperty>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Client" Version="17.12.*" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="TemplateSources\**\*.cs" />
+
+    <Content Include="Resources\**\*.*">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\assets\logo.png">
+      <Link>Resources\logo.png</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\*.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="server\**\*">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tools\**\*">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="GorSharp.VisualStudio.vsct">
+      <Generator>VSCTCompile</Generator>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+
+  <Target Name="BuildTemplateArchives" BeforeTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
+    <MakeDir Directories="$(MSBuildProjectDirectory)\Templates" />
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;$ErrorActionPreference='Stop'; $root='$(MSBuildProjectDirectory)'; $tmplRoot=Join-Path $root 'TemplateSources'; $outDir=Join-Path $root 'Templates'; $tmp=Join-Path $root 'obj\\template-pack'; if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }; New-Item -ItemType Directory -Path $tmp | Out-Null; $projectSrc=Join-Path $tmplRoot 'Project'; $projZip=Join-Path $outDir 'GorSharp.Project.zip'; if (Test-Path $projZip) { Remove-Item $projZip -Force }; Compress-Archive -Path (Join-Path $projectSrc '*') -DestinationPath $projZip -Force; $solutionStage=Join-Path $tmp 'Solution'; New-Item -ItemType Directory -Path $solutionStage | Out-Null; Copy-Item (Join-Path $tmplRoot 'Solution\\GorSharp.Solution.vstemplate') (Join-Path $solutionStage 'GorSharp.Solution.vstemplate') -Force; Copy-Item (Join-Path $projectSrc '*') (Join-Path $solutionStage 'Project') -Recurse -Force; $solZip=Join-Path $outDir 'GorSharp.Solution.zip'; if (Test-Path $solZip) { Remove-Item $solZip -Force }; Compress-Archive -Path (Join-Path $solutionStage '*') -DestinationPath $solZip -Force&quot;" />
+  </Target>
+
+  <Target Name="PublishStandaloneTools" BeforeTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
+    <MakeDir Directories="$(MSBuildProjectDirectory)\server" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)\tools" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)\tools\dictionaries" />
+
+    <Exec Command="dotnet publish &quot;$(MSBuildProjectDirectory)\..\GorSharp.LanguageServer\GorSharp.LanguageServer.csproj&quot; -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o &quot;$(MSBuildProjectDirectory)\server&quot;" />
+    <Exec Command="dotnet publish &quot;$(MSBuildProjectDirectory)\..\GorSharp.CLI\GorSharp.CLI.csproj&quot; -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o &quot;$(MSBuildProjectDirectory)\tools&quot;" />
+
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\..\..\dictionaries\sozluk.json"
+          DestinationFiles="$(MSBuildProjectDirectory)\tools\dictionaries\sozluk.json"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CopyNativeVsixToArtifacts" AfterTargets="Build" Condition="'$(OS)' == 'Windows_NT' and '$(TargetFramework)' != ''">
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+         Targets="CreateVsixContainer"
+         Properties="Configuration=$(Configuration);TargetFramework=$(TargetFramework);OutDir=$(OutDir);IntermediateOutputPath=$(IntermediateOutputPath);BaseIntermediateOutputPath=$(BaseIntermediateOutputPath);TargetName=$(TargetName);AssemblyName=$(AssemblyName);GeneratePkgDefFile=false;IncludePkgdefInVSIXContainer=false" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)\artifacts" />
+        <Copy SourceFiles="$(OutDir)$(TargetName).vsix" DestinationFiles="$(MSBuildProjectDirectory)\artifacts\GorSharp.VisualStudio.vsix" SkipUnchangedFiles="true" />
+        <Message Importance="high" Text="Native VSIX generated: $(OutDir)$(TargetName).vsix" />
+  </Target>
+
+        <Target Name="InstallVsixToExperimentalInstance"
+            AfterTargets="Build"
+            Condition="'$(OS)' == 'Windows_NT' and '$(Configuration)' == 'Debug' and '$(BuildingInsideVisualStudio)' == 'true' and '$(AutoDeployToExperimentalInstance)' == 'true'">
+          <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;$cache='$(LocalAppData)\Microsoft\VisualStudio\17.0_6df7a41eExp\ComponentModelCache'; if (Test-Path $cache) { Remove-Item (Join-Path $cache '*') -Recurse -Force -ErrorAction SilentlyContinue }&quot;" />
+          <Message Importance="high" Text="Installing VSIX to Experimental Instance: $(OutDir)$(TargetName).vsix" />
+          <Exec Command="&quot;$(DevEnvDir)VSIXInstaller.exe&quot; /q /shutdownprocesses /rootSuffix:Exp &quot;$(OutDir)$(TargetName).vsix&quot;" />
+        </Target>
+
+  <Import Project="$(PkgMicrosoft_VSSDK_BuildTools)\tools\vssdk\Microsoft.VsSDK.targets"
+          Condition="Exists('$(PkgMicrosoft_VSSDK_BuildTools)\tools\vssdk\Microsoft.VsSDK.targets')" />
+
+</Project>
+
+

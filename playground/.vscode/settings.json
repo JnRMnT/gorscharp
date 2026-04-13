@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "*.gör": "gorsharp"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  }
+}

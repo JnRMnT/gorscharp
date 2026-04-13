@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <GorSource Include="$safeprojectname$.gör" />
+    <None Include="@(GorSource)" />
+
+    <Compile Include="@(GorSource -> '%(RootDir)%(Directory)%(Filename).uretilenkod.cs')">
+      <DependentUpon>%(GorSource.Filename)%(GorSource.Extension)</DependentUpon>
+      <AutoGen>true</AutoGen>
+      <DesignTime>true</DesignTime>
+      <Visible>true</Visible>
+    </Compile>
+
+    <None Include="@(GorSource -> '%(RootDir)%(Directory)%(Filename).uretilenkod.cs')">
+      <DependentUpon>%(GorSource.Filename)%(GorSource.Extension)</DependentUpon>
+      <AutoGen>true</AutoGen>
+      <DesignTime>true</DesignTime>
+      <Visible>true</Visible>
+    </None>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <GorCliProjectPath>$(MSBuildProjectDirectory)\..\src\GorSharp.CLI\GorSharp.CLI.csproj</GorCliProjectPath>
+  </PropertyGroup>
+
+  <Target Name="GenerateGorCode" BeforeTargets="CoreCompile">
+    <Exec Command="dotnet run --project &quot;$(GorCliProjectPath)&quot; -- transpile &quot;%(GorSource.Identity)&quot; -o &quot;%(GorSource.RootDir)%(GorSource.Directory)%(GorSource.Filename).uretilenkod.cs&quot;" />
+  </Target>
+</Project>

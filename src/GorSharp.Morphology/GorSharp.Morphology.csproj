@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GorSharp.Core\GorSharp.Core.csproj" />
+  </ItemGroup>
+
+  <!-- Dev mode: local ZemberekDotNet project reference -->
+  <ItemGroup Condition="$(UseLocalZemberek) == 'true'">
+    <ProjectReference Include="$(ZemberekPath)\ZemberekDotNet.Morphology\ZemberekDotNet.Morphology.csproj" />
+  </ItemGroup>
+
+  <!-- CI/Release: NuGet package reference -->
+  <ItemGroup Condition="$(UseLocalZemberek) != 'true'">
+    <PackageReference Include="ZemberekDotNet.Morphology" Version="$(ZemberekNuGetVersion)" />
+  </ItemGroup>
+
+</Project>
+

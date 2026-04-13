@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.74-alpha">
+  <PropertyGroup>
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <StartupCommand>npm.cmd run watch</StartupCommand>
+    <JavaScriptTestRoot>src</JavaScriptTestRoot>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,7 @@
+// Gör# Örnek 01 — Temel atama ve yazdırma
+// Bu dosya ilk entegrasyon testinin kaynak dosyasıdır.
+
+x 5 olsun;
+y: sayı 10 olsun;
+x yeniSatıraYazdır;
+"Merhaba Dünya" yeniSatıraYazdır;

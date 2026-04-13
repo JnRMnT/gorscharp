@@ -1,0 +1,1027 @@
+{
+  "version": "0.1.0",
+  "description": "Gör# → C# keyword/type/method mapping dictionary with tooltip data",
+  "keywords": {
+    "olsun": {
+      "csharp": "=",
+      "category": "assignment",
+      "tooltip": {
+        "title": "olsun → = (atama)",
+        "description": "Değişken tanımlama ve değer atama. İlk kullanımda değişkeni oluşturur.",
+        "example": {
+          "gor": "x 5 olsun;",
+          "csharp": "var x = 5;"
+        }
+      }
+    },
+    "yazdır": {
+      "csharp": "Console.Write",
+      "category": "output",
+      "tooltip": {
+        "title": "yazdır → Console.Write",
+        "description": "Ekrana yeni satıra geçmeden yazar.",
+        "example": {
+          "gor": "\"Merhaba\" yazdır;",
+          "csharp": "Console.Write(\"Merhaba\");"
+        }
+      }
+    },
+    "yeniSatıraYazdır": {
+      "csharp": "Console.WriteLine",
+      "category": "output",
+      "tooltip": {
+        "title": "yeniSatıraYazdır → Console.WriteLine",
+        "description": "Ekrana yazıp yeni satıra geçer.",
+        "example": {
+          "gor": "\"Merhaba Dünya\" yeniSatıraYazdır;",
+          "csharp": "Console.WriteLine(\"Merhaba Dünya\");"
+        }
+      }
+    },
+    "yazıyaDönüştür": {
+      "csharp": ".ToString()",
+      "category": "conversion",
+      "tooltip": {
+        "title": "yazıyaDönüştür → .ToString()",
+        "description": "Bir değeri metin (string) türüne dönüştürür.",
+        "example": {
+          "gor": "x yazıyaDönüştür;",
+          "csharp": "x.ToString();"
+        }
+      }
+    },
+    "oku": {
+      "csharp": "Console.Read",
+      "category": "input",
+      "tooltip": {
+        "title": "oku → Console.Read",
+        "description": "Klavyeden tek karakter okur.",
+        "example": {
+          "gor": "karakter oku;",
+          "csharp": "var karakter = Console.Read();"
+        }
+      }
+    },
+    "okuSatır": {
+      "csharp": "Console.ReadLine",
+      "category": "input",
+      "tooltip": {
+        "title": "okuSatır → Console.ReadLine",
+        "description": "Klavyeden bir satır metin okur.",
+        "example": {
+          "gor": "isim okuSatır;",
+          "csharp": "var isim = Console.ReadLine();"
+        }
+      }
+    },
+    "eğer": {
+      "csharp": "if",
+      "category": "control-flow",
+      "tooltip": {
+        "title": "eğer → if",
+        "description": "Koşul ifadesi. Belirtilen koşul doğruysa kod bloğunu çalıştırır.",
+        "example": {
+          "gor": "eğer (x büyüktür 5) {\n    \"Büyük\" yeniSatıraYazdır;\n}",
+          "csharp": "if (x > 5) {\n    Console.WriteLine(\"Büyük\");\n}"
+        }
+      }
+    },
+    "ise": {
+      "csharp": "",
+      "category": "control-flow",
+      "tooltip": {
+        "title": "ise → (doğal dil eki)",
+        "description": "Koşul cümlesini doğal Türkçe yapmak için kullanılabilir. Derleyici tarafından yok sayılır.",
+        "example": {
+          "gor": "eğer puan büyükEşittir 90 ise { }",
+          "csharp": "if (puan >= 90) { }"
+        }
+      }
+    },
+    "olursa": {
+      "csharp": "",
+      "category": "control-flow",
+      "tooltip": {
+        "title": "olursa → (doğal dil eki)",
+        "description": "Koşul ifadesinde doğal bir bağlaç olarak kullanılabilir. Derleyici tarafından yok sayılır.",
+        "example": {
+          "gor": "eğer sıcaklık büyüktür 30 olursa { }",
+          "csharp": "if (sıcaklık > 30) { }"
+        }
+      }
+    },
+    "iken": {
+      "csharp": "",
+      "category": "loop",
+      "tooltip": {
+        "title": "iken → (doğal dil eki)",
+        "description": "döngü koşulunu daha doğal okumak için kullanılabilir. Derleyici tarafından yok sayılır.",
+        "example": {
+          "gor": "döngü sayaç büyüktür 0 iken { }",
+          "csharp": "while (sayaç > 0) { }"
+        }
+      }
+    },
+    "yoksa eğer": {
+      "csharp": "else if",
+      "category": "control-flow",
+      "tooltip": {
+        "title": "yoksa eğer → else if",
+        "description": "Önceki koşul yanlışsa yeni bir koşul kontrol eder.",
+        "example": {
+          "gor": "yoksa eğer (x eşittir 5) {\n    \"Eşit\" yeniSatıraYazdır;\n}",
+          "csharp": "else if (x == 5) {\n    Console.WriteLine(\"Eşit\");\n}"
+        }
+      }
+    },
+    "değilse": {
+      "csharp": "else",
+      "category": "control-flow",
+      "tooltip": {
+        "title": "değilse → else",
+        "description": "Hiçbir koşul doğru değilse çalışan blok.",
+        "example": {
+          "gor": "değilse {\n    \"Küçük\" yeniSatıraYazdır;\n}",
+          "csharp": "else {\n    Console.WriteLine(\"Küçük\");\n}"
+        }
+      }
+    },
+    "döngü": {
+      "csharp": "while",
+      "category": "loop",
+      "tooltip": {
+        "title": "döngü → while",
+        "description": "Koşul doğru olduğu sürece tekrar eden döngü.",
+        "example": {
+          "gor": "döngü (x küçüktür 10) {\n    x yeniSatıraYazdır;\n    x artsın;\n}",
+          "csharp": "while (x < 10) {\n    Console.WriteLine(x);\n    x++;\n}"
+        }
+      }
+    },
+    "tekrarla": {
+      "csharp": "for",
+      "category": "loop",
+      "tooltip": {
+        "title": "tekrarla → for",
+        "description": "Belirli sayıda tekrar eden döngü.",
+        "example": {
+          "gor": "tekrarla (i, 0, 10) {\n    i yeniSatıraYazdır;\n}",
+          "csharp": "for (int i = 0; i < 10; i++) {\n    Console.WriteLine(i);\n}"
+        }
+      }
+    },
+    "her": {
+      "csharp": "foreach",
+      "category": "loop",
+      "tooltip": {
+        "title": "her → foreach",
+        "description": "Koleksiyondaki her eleman için döngü.",
+        "example": {
+          "gor": "her (eleman, liste) {\n    eleman yeniSatıraYazdır;\n}",
+          "csharp": "foreach (var eleman in liste) {\n    Console.WriteLine(eleman);\n}"
+        }
+      }
+    },
+    "kır": {
+      "csharp": "break",
+      "category": "loop",
+      "tooltip": {
+        "title": "kır → break",
+        "description": "Döngüden çıkar.",
+        "example": {
+          "gor": "kır;",
+          "csharp": "break;"
+        }
+      }
+    },
+    "devam": {
+      "csharp": "continue",
+      "category": "loop",
+      "tooltip": {
+        "title": "devam → continue",
+        "description": "Döngünün bir sonraki adımına geçer.",
+        "example": {
+          "gor": "devam;",
+          "csharp": "continue;"
+        }
+      }
+    },
+    "fonksiyon": {
+      "csharp": "method",
+      "category": "function",
+      "tooltip": {
+        "title": "fonksiyon → method (metot)",
+        "description": "Yeni bir fonksiyon (metot) tanımlar.",
+        "example": {
+          "gor": "fonksiyon topla(a: sayı, b: sayı): sayı {\n    döndür a + b;\n}",
+          "csharp": "int topla(int a, int b) {\n    return a + b;\n}"
+        }
+      }
+    },
+    "döndür": {
+      "csharp": "return",
+      "category": "function",
+      "tooltip": {
+        "title": "döndür → return",
+        "description": "Fonksiyondan değer döndürür.",
+        "example": {
+          "gor": "döndür sonuç;",
+          "csharp": "return sonuç;"
+        }
+      }
+    },
+    "ile": {
+      "csharp": ",",
+      "category": "function",
+      "tooltip": {
+        "title": "ile → , (argüman ayırıcı)",
+        "description": "SOV fonksiyon çağrısında argümanları ayırır.",
+        "example": {
+          "gor": "3 ile 5 topla;",
+          "csharp": "topla(3, 5);"
+        }
+      }
+    },
+    "dene": {
+      "csharp": "try",
+      "category": "error-handling",
+      "tooltip": {
+        "title": "dene → try",
+        "description": "Hata oluşabilecek kodu çalıştırmayı dener.",
+        "example": {
+          "gor": "dene {\n    riskliİşlem();\n}",
+          "csharp": "try {\n    riskliİşlem();\n}"
+        }
+      }
+    },
+    "hata_varsa": {
+      "csharp": "catch",
+      "category": "error-handling",
+      "tooltip": {
+        "title": "hata_varsa → catch",
+        "description": "Hata oluştuğunda çalışan blok. Hata mesajını yakalar.",
+        "example": {
+          "gor": "hata_varsa (mesaj) {\n    mesaj yeniSatıraYazdır;\n}",
+          "csharp": "catch (Exception e) {\n    var mesaj = e.Message;\n    Console.WriteLine(mesaj);\n}"
+        }
+      }
+    },
+    "sonunda": {
+      "csharp": "finally",
+      "category": "error-handling",
+      "tooltip": {
+        "title": "sonunda → finally",
+        "description": "Hata olsa da olmasa da her zaman çalışan blok.",
+        "example": {
+          "gor": "sonunda {\n    \"Bitti\" yeniSatıraYazdır;\n}",
+          "csharp": "finally {\n    Console.WriteLine(\"Bitti\");\n}"
+        }
+      }
+    },
+    "sınıf": {
+      "csharp": "class",
+      "category": "oop",
+      "tooltip": {
+        "title": "sınıf → class",
+        "description": "Yeni bir sınıf tanımlar.",
+        "example": {
+          "gor": "sınıf Öğrenci {\n    isim: metin;\n}",
+          "csharp": "class Öğrenci {\n    string isim;\n}"
+        }
+      }
+    },
+    "kurucu": {
+      "csharp": "constructor",
+      "category": "oop",
+      "tooltip": {
+        "title": "kurucu → constructor (yapıcı)",
+        "description": "Sınıf nesnesi oluşturulurken çağrılan özel metot.",
+        "example": {
+          "gor": "kurucu(isim: metin) {\n    bu.isim = isim;\n}",
+          "csharp": "ClassName(string isim) {\n    this.isim = isim;\n}"
+        }
+      }
+    },
+    "bu": {
+      "csharp": "this",
+      "category": "oop",
+      "tooltip": {
+        "title": "bu → this",
+        "description": "Mevcut nesneye referans.",
+        "example": {
+          "gor": "bu.isim = isim;",
+          "csharp": "this.isim = isim;"
+        }
+      }
+    },
+    "miras": {
+      "csharp": ":",
+      "category": "oop",
+      "tooltip": {
+        "title": "miras → : (kalıtım)",
+        "description": "Bir sınıfın başka bir sınıftan miras almasını sağlar.",
+        "example": {
+          "gor": "sınıf Lisansüstü miras Öğrenci { }",
+          "csharp": "class Lisansüstü : Öğrenci { }"
+        }
+      }
+    },
+    "arayüz": {
+      "csharp": "interface",
+      "category": "oop",
+      "tooltip": {
+        "title": "arayüz → interface",
+        "description": "Sınıfların uygulaması gereken metot tanımlarını içeren yapı.",
+        "example": {
+          "gor": "arayüz IHesaplanabilir {\n    fonksiyon hesapla(): sayı;\n}",
+          "csharp": "interface IHesaplanabilir {\n    int hesapla();\n}"
+        }
+      }
+    },
+    "geçersiz_kıl": {
+      "csharp": "override",
+      "category": "oop",
+      "tooltip": {
+        "title": "geçersiz_kıl → override",
+        "description": "Miras alınan bir metodu yeniden tanımlar.",
+        "example": {
+          "gor": "geçersiz_kıl fonksiyon tanıt() { }",
+          "csharp": "override void tanıt() { }"
+        }
+      }
+    },
+    "başla": {
+      "csharp": "Main",
+      "category": "entry-point",
+      "tooltip": {
+        "title": "başla → Main (giriş noktası)",
+        "description": "Programın çalışmaya başladığı blok. İsteğe bağlı — üst düzey ifadeler de geçerlidir.",
+        "example": {
+          "gor": "başla {\n    \"Merhaba\" yeniSatıraYazdır;\n}",
+          "csharp": "static void Main(string[] args) {\n    Console.WriteLine(\"Merhaba\");\n}"
+        }
+      }
+    },
+    "sonra": {
+      "csharp": ".",
+      "category": "chaining",
+      "tooltip": {
+        "title": "sonra → . (zincirleme)",
+        "description": "Aynı nesne üzerinde ardışık işlemler yapar.",
+        "example": {
+          "gor": "liste'ye 10 ekle sonra 20 ekle;",
+          "csharp": "liste.Add(10);\nliste.Add(20);"
+        }
+      }
+    }
+  },
+  "types": {
+    "sayı": {
+      "csharp": "int",
+      "tooltip": {
+        "title": "sayı → int",
+        "description": "Tam sayı türü. -2.147.483.648 ile 2.147.483.647 arası değer alır.",
+        "example": {
+          "gor": "x: sayı 42 olsun;",
+          "csharp": "int x = 42;"
+        }
+      }
+    },
+    "metin": {
+      "csharp": "string",
+      "tooltip": {
+        "title": "metin → string",
+        "description": "Metin (karakter dizisi) türü.",
+        "example": {
+          "gor": "isim: metin \"Ali\" olsun;",
+          "csharp": "string isim = \"Ali\";"
+        }
+      }
+    },
+    "mantık": {
+      "csharp": "bool",
+      "tooltip": {
+        "title": "mantık → bool",
+        "description": "Mantıksal (doğru/yanlış) türü.",
+        "example": {
+          "gor": "aktif: mantık doğru olsun;",
+          "csharp": "bool aktif = true;"
+        }
+      }
+    },
+    "ondalık": {
+      "csharp": "double",
+      "tooltip": {
+        "title": "ondalık → double",
+        "description": "Ondalıklı (kesirli) sayı türü.",
+        "example": {
+          "gor": "pi: ondalık 3.14 olsun;",
+          "csharp": "double pi = 3.14;"
+        }
+      }
+    },
+    "liste": {
+      "csharp": "List",
+      "tooltip": {
+        "title": "liste → List<T>",
+        "description": "Dinamik boyutlu sıralı koleksiyon.",
+        "example": {
+          "gor": "sayılar liste olsun;",
+          "csharp": "var sayılar = new List<object>();"
+        }
+      }
+    },
+    "sözlük": {
+      "csharp": "Dictionary",
+      "tooltip": {
+        "title": "sözlük → Dictionary<TKey, TValue>",
+        "description": "Anahtar-değer çiftlerinden oluşan koleksiyon.",
+        "example": {
+          "gor": "notlar sözlük olsun;",
+          "csharp": "var notlar = new Dictionary<object, object>();"
+        }
+      }
+    }
+  },
+  "literals": {
+    "doğru": {
+      "csharp": "true",
+      "tooltip": {
+        "title": "doğru → true",
+        "description": "Mantıksal doğru değeri.",
+        "example": {
+          "gor": "aktif doğru olsun;",
+          "csharp": "var aktif = true;"
+        }
+      }
+    },
+    "yanlış": {
+      "csharp": "false",
+      "tooltip": {
+        "title": "yanlış → false",
+        "description": "Mantıksal yanlış değeri.",
+        "example": {
+          "gor": "aktif yanlış olsun;",
+          "csharp": "var aktif = false;"
+        }
+      }
+    },
+    "evet": {
+      "csharp": "true",
+      "tooltip": {
+        "title": "evet → true",
+        "description": "doğru için doğal dil eşdeğeri.",
+        "example": {
+          "gor": "aktif evet olsun;",
+          "csharp": "var aktif = true;"
+        }
+      }
+    },
+    "hayır": {
+      "csharp": "false",
+      "tooltip": {
+        "title": "hayır → false",
+        "description": "yanlış için doğal dil eşdeğeri.",
+        "example": {
+          "gor": "iptal hayır olsun;",
+          "csharp": "var iptal = false;"
+        }
+      }
+    },
+    "boş": {
+      "csharp": "null",
+      "tooltip": {
+        "title": "boş → null",
+        "description": "Değer yok / boş referans.",
+        "example": {
+          "gor": "veri boş olsun;",
+          "csharp": "var veri = null;"
+        }
+      }
+    }
+  },
+  "operators": {
+    "ve": {
+      "csharp": "&&",
+      "category": "logical",
+      "tooltip": {
+        "title": "ve → && (mantıksal VE)",
+        "description": "Her iki koşul da doğruysa sonuç doğrudur.",
+        "example": {
+          "gor": "eğer (x büyüktür 0 ve x küçüktür 10) { }",
+          "csharp": "if (x > 0 && x < 10) { }"
+        }
+      }
+    },
+    "veya": {
+      "csharp": "||",
+      "category": "logical",
+      "tooltip": {
+        "title": "veya → || (mantıksal VEYA)",
+        "description": "Koşullardan biri doğruysa sonuç doğrudur.",
+        "example": {
+          "gor": "eğer (x küçüktür 0 veya x büyüktür 100) { }",
+          "csharp": "if (x < 0 || x > 100) { }"
+        }
+      }
+    },
+    "ya da": {
+      "csharp": "||",
+      "category": "logical",
+      "tooltip": {
+        "title": "ya da → || (mantıksal VEYA)",
+        "description": "veya ile aynı anlama gelir; daha doğal bir yazımdır.",
+        "example": {
+          "gor": "eğer (x küçüktür 0 ya da x büyüktür 100) { }",
+          "csharp": "if (x < 0 || x > 100) { }"
+        }
+      }
+    },
+    "hem de": {
+      "csharp": "&&",
+      "category": "logical",
+      "tooltip": {
+        "title": "hem de → && (mantıksal VE)",
+        "description": "ve ile aynı anlama gelir; vurgu için doğal yazım.",
+        "example": {
+          "gor": "eğer (x büyüktür 0 hem de x küçüktür 10) { }",
+          "csharp": "if (x > 0 && x < 10) { }"
+        }
+      }
+    },
+    "ne de": {
+      "csharp": "&& !",
+      "category": "logical",
+      "tooltip": {
+        "title": "ne ... ne de → !(a) && !(b)",
+        "description": "iki koşulun da sağlanmamasını ifade eder.",
+        "example": {
+          "gor": "x ne a eşittir 1 ne de b eşittir 2 olsun;",
+          "csharp": "var x = !(a == 1) && !(b == 2);"
+        }
+      }
+    },
+    "değil": {
+      "csharp": "!",
+      "category": "logical",
+      "tooltip": {
+        "title": "değil → ! (mantıksal DEĞİL)",
+        "description": "Koşulun tersini alır. Doğruyu yanlışa, yanlışı doğruya çevirir.",
+        "example": {
+          "gor": "eğer (değil aktif) { }",
+          "csharp": "if (!aktif) { }"
+        }
+      }
+    },
+    "eşittir": {
+      "csharp": "==",
+      "category": "comparison",
+      "tooltip": {
+        "title": "eşittir → == (eşitlik karşılaştırması)",
+        "description": "İki değerin eşit olup olmadığını kontrol eder.",
+        "example": {
+          "gor": "eğer (x eşittir 5) { }",
+          "csharp": "if (x == 5) { }"
+        }
+      }
+    },
+    "eşitDeğildir": {
+      "csharp": "!=",
+      "category": "comparison",
+      "tooltip": {
+        "title": "eşitDeğildir → != (eşit değil)",
+        "description": "İki değerin farklı olup olmadığını kontrol eder.",
+        "example": {
+          "gor": "eğer (x eşitDeğildir 0) { }",
+          "csharp": "if (x != 0) { }"
+        }
+      }
+    },
+    "büyüktür": {
+      "csharp": ">",
+      "category": "comparison",
+      "tooltip": {
+        "title": "büyüktür → > (büyüktür)",
+        "description": "Sol değerin sağ değerden büyük olup olmadığını kontrol eder.",
+        "example": {
+          "gor": "eğer (x büyüktür 10) { }",
+          "csharp": "if (x > 10) { }"
+        }
+      }
+    },
+    "küçüktür": {
+      "csharp": "<",
+      "category": "comparison",
+      "tooltip": {
+        "title": "küçüktür → < (küçüktür)",
+        "description": "Sol değerin sağ değerden küçük olup olmadığını kontrol eder.",
+        "example": {
+          "gor": "eğer (x küçüktür 10) { }",
+          "csharp": "if (x < 10) { }"
+        }
+      }
+    },
+    "büyükEşittir": {
+      "csharp": ">=",
+      "category": "comparison",
+      "tooltip": {
+        "title": "büyükEşittir → >= (büyük eşittir)",
+        "description": "Sol değerin sağ değere eşit veya büyük olup olmadığını kontrol eder.",
+        "example": {
+          "gor": "eğer (x büyükEşittir 10) { }",
+          "csharp": "if (x >= 10) { }"
+        }
+      }
+    },
+    "küçükEşittir": {
+      "csharp": "<=",
+      "category": "comparison",
+      "tooltip": {
+        "title": "küçükEşittir → <= (küçük eşittir)",
+        "description": "Sol değerin sağ değere eşit veya küçük olup olmadığını kontrol eder.",
+        "example": {
+          "gor": "eğer (x küçükEşittir 10) { }",
+          "csharp": "if (x <= 10) { }"
+        }
+      }
+    },
+    "arttır": {
+      "csharp": "+=",
+      "category": "compound",
+      "tooltip": {
+        "title": "arttır → += (arttırıp ata)",
+        "description": "Değişkenin değerini belirtilen miktar kadar arttırır.",
+        "example": {
+          "gor": "x 5 arttır;",
+          "csharp": "x += 5;"
+        }
+      }
+    },
+    "azalt": {
+      "csharp": "-=",
+      "category": "compound",
+      "tooltip": {
+        "title": "azalt → -= (azaltıp ata)",
+        "description": "Değişkenin değerini belirtilen miktar kadar azaltır.",
+        "example": {
+          "gor": "x 3 azalt;",
+          "csharp": "x -= 3;"
+        }
+      }
+    },
+    "çarp": {
+      "csharp": "*=",
+      "category": "compound",
+      "tooltip": {
+        "title": "çarp → *= (çarpıp ata)",
+        "description": "Değişkenin değerini belirtilen miktar ile çarpar.",
+        "example": {
+          "gor": "x 2 çarp;",
+          "csharp": "x *= 2;"
+        }
+      }
+    },
+    "böl": {
+      "csharp": "/=",
+      "category": "compound",
+      "tooltip": {
+        "title": "böl → /= (bölüp ata)",
+        "description": "Değişkenin değerini belirtilen miktara böler.",
+        "example": {
+          "gor": "x 4 böl;",
+          "csharp": "x /= 4;"
+        }
+      }
+    },
+    "artsın": {
+      "csharp": "++",
+      "category": "unary",
+      "tooltip": {
+        "title": "artsın → ++ (bir arttır)",
+        "description": "Değişkenin değerini 1 arttırır.",
+        "example": {
+          "gor": "x artsın;",
+          "csharp": "x++;"
+        }
+      }
+    },
+    "azalsın": {
+      "csharp": "--",
+      "category": "unary",
+      "tooltip": {
+        "title": "azalsın → -- (bir azalt)",
+        "description": "Değişkenin değerini 1 azaltır.",
+        "example": {
+          "gor": "x azalsın;",
+          "csharp": "x--;"
+        }
+      }
+    }
+  },
+  "accessModifiers": {
+    "açık": {
+      "csharp": "public",
+      "tooltip": {
+        "title": "açık → public",
+        "description": "Her yerden erişilebilir.",
+        "example": {
+          "gor": "açık fonksiyon hesapla(): sayı { }",
+          "csharp": "public int hesapla() { }"
+        }
+      }
+    },
+    "gizli": {
+      "csharp": "private",
+      "tooltip": {
+        "title": "gizli → private",
+        "description": "Yalnızca sınıf içinden erişilebilir.",
+        "example": {
+          "gor": "gizli sayı: sayı;",
+          "csharp": "private int sayı;"
+        }
+      }
+    },
+    "korumalı": {
+      "csharp": "protected",
+      "tooltip": {
+        "title": "korumalı → protected",
+        "description": "Sınıf içinden ve miras alan sınıflardan erişilebilir.",
+        "example": {
+          "gor": "korumalı isim: metin;",
+          "csharp": "protected string isim;"
+        }
+      }
+    }
+  },
+  "suffixes": {
+    "dative": {
+      "markers": ["'ye", "'ya", "'e", "'a"],
+      "case": "Dative",
+      "description": "Hedef/yönelme durumu — nesneye yönelik işlem",
+      "verbMappings": {
+        "ekle": { "csharp": ".Add({arg})", "description": "Koleksiyona eleman ekler" },
+        "ata": { "csharp": " = {arg}", "description": "Değer atar" },
+        "gönder": { "csharp": ".Send({arg})", "description": "Mesaj/veri gönderir" }
+      }
+    },
+    "ablative": {
+      "markers": ["'den", "'dan", "'ten", "'tan"],
+      "case": "Ablative",
+      "description": "Ayrılma/uzaklaşma durumu — nesneden uzaklaşan işlem",
+      "verbMappings": {
+        "çıkar": { "csharp": ".Remove({arg})", "description": "Koleksiyondan eleman çıkarır" },
+        "al": { "csharp": "[{arg}]", "description": "Değer alır" },
+        "sil": { "csharp": ".RemoveAt({arg})", "description": "Belirli konumdaki elemanı siler" }
+      }
+    },
+    "genitive": {
+      "markers": ["'nin", "'nın", "'nun", "'nün", "'in", "'ın", "'un", "'ün"],
+      "case": "Genitive",
+      "description": "Tamlayan durumu — sahiplik/özellik erişimi",
+      "propertyMappings": {
+        "uzunluğu": { "csharp": ".Count", "description": "Koleksiyonun eleman sayısı" },
+        "boyutu": { "csharp": ".Length", "description": "Dizi veya metnin uzunluğu" },
+        "türü": { "csharp": ".GetType()", "description": "Nesnenin türünü döndürür" }
+      }
+    },
+    "locative": {
+      "markers": ["'de", "'da", "'te", "'ta"],
+      "case": "Locative",
+      "description": "Bulunma durumu — nesnede arama/bulma",
+      "verbMappings": {
+        "ara": { "csharp": ".Contains({arg})", "description": "Elemanın var olup olmadığını kontrol eder" },
+        "bul": { "csharp": ".Find({arg})", "description": "Eşleşen elemanı bulur" }
+      }
+    },
+    "accusative": {
+      "markers": ["'i", "'ı", "'u", "'ü", "'yi", "'yı", "'yu", "'yü"],
+      "case": "Accusative",
+      "description": "Belirtme durumu — doğrudan nesne",
+      "note": "Bağlama göre değişir — genellikle doğrudan nesne belirtir"
+    }
+  },
+  "signatures": {
+    "description": "Built-in function signatures for Signature Help and IntelliSense",
+    "functions": {
+      "yazdır": {
+        "parameters": [
+          { "name": "value", "type": "metin" }
+        ],
+        "returnType": "hiçbir şey",
+        "tooltip": "Ekrana yeni satıra geçmeden yazar"
+      },
+      "yeniSatıraYazdır": {
+        "parameters": [
+          { "name": "value", "type": "metin" }
+        ],
+        "returnType": "hiçbir şey",
+        "tooltip": "Ekrana yazıp yeni satıra geçer"
+      },
+      "oku": {
+        "parameters": [],
+        "returnType": "sayı",
+        "tooltip": "Standart girişten bir karakterin ASCII kodunu okur"
+      },
+      "okuSatır": {
+        "parameters": [],
+        "returnType": "metin",
+        "tooltip": "Standart girişten bir satırı okur"
+      },
+      "yazıyaDönüştür": {
+        "parameters": [],
+        "returnType": "metin",
+        "tooltip": "Bir değeri metin türüne dönüştürür"
+      },
+      "sayıyaDönüştür": {
+        "parameters": [
+          { "name": "value", "type": "metin" }
+        ],
+        "returnType": "sayı",
+        "tooltip": "Metni sayıya dönüştürür"
+      },
+      "uzunluk": {
+        "parameters": [],
+        "returnType": "sayı",
+        "tooltip": "Metnin veya koleksiyonun uzunluğunu döndürür"
+      },
+      "ekle": {
+        "parameters": [
+          { "name": "item", "type": "T" }
+        ],
+        "returnType": "hiçbir şey",
+        "tooltip": "Koleksiyon sonuna eleman ekler"
+      },
+      "çıkar": {
+        "parameters": [
+          { "name": "item", "type": "T" }
+        ],
+        "returnType": "mantık",
+        "tooltip": "Koleksiyondan elemanı kaldırır"
+      },
+      "temizle": {
+        "parameters": [],
+        "returnType": "hiçbir şey",
+        "tooltip": "Koleksiyonun tüm elemanlarını siler"
+      },
+      "içeriyorMu": {
+        "parameters": [
+          { "name": "item", "type": "T" }
+        ],
+        "returnType": "mantık",
+        "tooltip": "Koleksiyon elemanı içerip içermediğini kontrol eder"
+      },
+      "ara": {
+        "parameters": [
+          { "name": "item", "type": "T" }
+        ],
+        "returnType": "sayı",
+        "tooltip": "Koleksiyonda elemanın indeksini arar"
+      },
+      "büyükYap": {
+        "parameters": [],
+        "returnType": "metin",
+        "tooltip": "Metni büyük harflere dönüştürür"
+      },
+      "küçükYap": {
+        "parameters": [],
+        "returnType": "metin",
+        "tooltip": "Metni küçük harflere dönüştürür"
+      },
+      "böl": {
+        "parameters": [
+          { "name": "ayırıcı", "type": "metin" }
+        ],
+        "returnType": "dizi",
+        "tooltip": "Metni ayırıcıya göre parçalara böler"
+      },
+      "birleştir": {
+        "parameters": [
+          { "name": "ayırıcı", "type": "metin" }
+        ],
+        "returnType": "metin",
+        "tooltip": "Koleksiyonun elemanlarını ayırıcı ile birleştirir"
+      },
+      "içeriyor": {
+        "parameters": [
+          { "name": "araştır", "type": "metin" }
+        ],
+        "returnType": "mantık",
+        "tooltip": "Metni araştır metnini içerip içermediğini kontrol eder"
+      },
+      "başlayıp": {
+        "parameters": [
+          { "name": "önek", "type": "metin" }
+        ],
+        "returnType": "mantık",
+        "tooltip": "Metin verilen önek ile başlıyıp başlamadığını kontrol eder"
+      },
+      "bitiyorMu": {
+        "parameters": [
+          { "name": "sonek", "type": "metin" }
+        ],
+        "returnType": "mantık",
+        "tooltip": "Metin verilen sonek ile bitiyip bitmediğini kontrol eder"
+      },
+      "trim": {
+        "parameters": [],
+        "returnType": "metin",
+        "tooltip": "Metinin başında ve sonundaki boşlukları kaldırır"
+      },
+      "değiştir": {
+        "parameters": [
+          { "name": "eski", "type": "metin" },
+          { "name": "yeni", "type": "metin" }
+        ],
+        "returnType": "metin",
+        "tooltip": "Metinde eski kısmı yeni kısım ile değiştirir"
+      },
+      "mutlakDeğer": {
+        "parameters": [
+          { "name": "sayı", "type": "sayı" }
+        ],
+        "returnType": "sayı",
+        "tooltip": "Sayının mutlak değerini döndürür"
+      },
+      "kuvvet": {
+        "parameters": [
+          { "name": "taban", "type": "sayı" },
+          { "name": "üs", "type": "sayı" }
+        ],
+        "returnType": "sayı",
+        "tooltip": "Tabanın üs kuvvetini hesaplar"
+      },
+      "karekök": {
+        "parameters": [
+          { "name": "sayı", "type": "sayı" }
+        ],
+        "returnType": "sayı",
+        "tooltip": "Sayının karekökünü hesaplar"
+      },
+      "yuvarlak": {
+        "parameters": [
+          { "name": "sayı", "type": "onlu" }
+        ],
+        "returnType": "sayı",
+        "tooltip": "Sayıyı en yakın tam sayıya yuvarlar"
+      },
+      "tavan": {
+        "parameters": [
+          { "name": "sayı", "type": "onlu" }
+        ],
+        "returnType": "sayı",
+        "tooltip": "Sayıyı yukarıya doğru en yakın tam sayıya yuvarlar"
+      },
+      "zemin": {
+        "parameters": [
+          { "name": "sayı", "type": "onlu" }
+        ],
+        "returnType": "sayı",
+        "tooltip": "Sayıyı aşağıya doğru en yakın tam sayıya yuvarlar"
+      },
+      "rastgele": {
+        "parameters": [
+          { "name": "enBüyük", "type": "sayı" }
+        ],
+        "returnType": "sayı",
+        "tooltip": "0 ile enBüyük arasında rastgele bir sayı döndürür"
+      },
+      "at": {
+        "parameters": [
+          { "name": "indeks", "type": "sayı" }
+        ],
+        "returnType": "T",
+        "tooltip": "Dizinin verilen indeksindeki elemanı döndürür"
+      },
+      "sonuncu": {
+        "parameters": [],
+        "returnType": "T",
+        "tooltip": "Koleksiyonun son elemanını döndürür"
+      },
+      "ilk": {
+        "parameters": [],
+        "returnType": "T",
+        "tooltip": "Koleksiyonun ilk elemanını döndürür"
+      },
+      "sayaç": {
+        "parameters": [],
+        "returnType": "sayı",
+        "tooltip": "Koleksiyondaki eleman sayısını döndürür"
+      },
+      "tersÇevir": {
+        "parameters": [],
+        "returnType": "hiçbir şey",
+        "tooltip": "Koleksiyonun elemanlarının sırasını tersine çevirir"
+      },
+      "sırala": {
+        "parameters": [],
+        "returnType": "hiçbir şey",
+        "tooltip": "Koleksiyonun elemanlarını sıralar"
+      },
+      "benzersizYap": {
+        "parameters": [],
+        "returnType": "dizi",
+        "tooltip": "Koleksiyondan yinelenen elemanları kaldırarak benzersiz elemanları döndürür"
+      }
+    }
+  }
+}

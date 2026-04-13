@@ -1,0 +1,24 @@
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <Identity Id="GorSharp.VisualStudio.fd7e2b3a-1c4a-4e8f-b9d2-a5f6c8e01234" Version="0.1.0.0" Language="en-US" Publisher="GorSharp" />
+    <DisplayName>Gör# — Turkish C# Transpiler</DisplayName>
+    <Description xml:space="preserve">Language support for Gör# (.gör) — a Turkish-to-C# educational transpiler for Visual Studio 2022.</Description>
+    <Icon>Resources\logo.png</Icon>
+    <PreviewImage>Resources\logo.png</PreviewImage>
+    <Tags>turkish, csharp, transpiler, educational, gorsharp</Tags>
+  </Metadata>
+  <Installation Scope="ProductExtension" AllUsers="false">
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" Version="[4.5,)" />
+  </Dependencies>
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,18.0)" DisplayName="Visual Studio core editor" />
+  </Prerequisites>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="GorSharp.VisualStudio.dll" />
+  </Assets>
+</PackageManifest>

@@ -1,0 +1,90 @@
+{
+  "Eğer Bloğu (If)": {
+    "prefix": "eğer",
+    "body": [
+      "eğer ${1:koşul} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Eğer (if) bloğu"
+  },
+  "Eğer-Değilse (If-Else)": {
+    "prefix": "eğer-değilse",
+    "body": [
+      "eğer ${1:koşul} {",
+      "\t$2",
+      "} değilse {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Eğer-değilse (if-else) bloğu"
+  },
+  "Döngü (While)": {
+    "prefix": "döngü",
+    "body": [
+      "döngü ${1:koşul} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Döngü (while) bloğu"
+  },
+  "Tekrarla (For)": {
+    "prefix": "tekrarla",
+    "body": [
+      "tekrarla ${1:i} 0 olsun; ${1:i} küçüktür ${2:10}; ${1:i} 1 arttır {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Tekrarla (for) döngüsü"
+  },
+  "Fonksiyon": {
+    "prefix": "fonksiyon",
+    "body": [
+      "fonksiyon ${1:isim}(${2:parametreler}): ${3:sayı} {",
+      "\t$0",
+      "\tdöndür ${4:değer};",
+      "}"
+    ],
+    "description": "Fonksiyon tanımı"
+  },
+  "Fonksiyon (Void)": {
+    "prefix": "fonksiyon-boş",
+    "body": [
+      "fonksiyon ${1:isim}(${2:parametreler}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Void fonksiyon tanımı"
+  },
+  "Yazdır": {
+    "prefix": "yazdır",
+    "body": "\"${1:mesaj}\" yazdır;",
+    "description": "Console.Write"
+  },
+  "Yeni Satıra Yazdır": {
+    "prefix": "yeniSatıraYazdır",
+    "body": "\"${1:mesaj}\" yeniSatıraYazdır;",
+    "description": "Console.WriteLine"
+  },
+  "Değişken (Inferred)": {
+    "prefix": "olsun",
+    "body": "${1:isim} ${2:değer} olsun;",
+    "description": "Tür çıkarımlı değişken tanımı → var x = değer;"
+  },
+  "Değişken (Typed)": {
+    "prefix": "değişken",
+    "body": "${1:isim}: ${2:sayı} ${3:değer} olsun;",
+    "description": "Türlü değişken tanımı → int x = değer;"
+  },
+  "Dene-Yakala (Try-Catch)": {
+    "prefix": "dene",
+    "body": [
+      "dene {",
+      "\t$0",
+      "} hata_varsa {",
+      "\t// hata işleme",
+      "}"
+    ],
+    "description": "Dene-yakala (try-catch) bloğu"
+  }
+}

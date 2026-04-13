@@ -1,0 +1,80 @@
+name: NuGet Publish
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java (for ANTLR)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+      - name: Restore
+        run: dotnet restore GorSharp.slnx
+
+      - name: Build
+        run: dotnet build GorSharp.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test GorSharp.slnx --configuration Release --no-build
+
+      - name: Pack GorSharp.Core
+        run: >
+          dotnet pack src/GorSharp.Core/GorSharp.Core.csproj
+          --configuration Release
+          --no-build
+          -p:PackageVersion=${{ steps.version.outputs.VERSION }}
+          -o ./packages
+
+      - name: Pack GorSharp.Parser
+        run: >
+          dotnet pack src/GorSharp.Parser/GorSharp.Parser.csproj
+          --configuration Release
+          --no-build
+          -p:PackageVersion=${{ steps.version.outputs.VERSION }}
+          -o ./packages
+
+      - name: Pack GorSharp.Transpiler
+        run: >
+          dotnet pack src/GorSharp.Transpiler/GorSharp.Transpiler.csproj
+          --configuration Release
+          --no-build
+          -p:PackageVersion=${{ steps.version.outputs.VERSION }}
+          -o ./packages
+
+      - name: Pack GorSharp.Morphology
+        run: >
+          dotnet pack src/GorSharp.Morphology/GorSharp.Morphology.csproj
+          --configuration Release
+          --no-build
+          -p:PackageVersion=${{ steps.version.outputs.VERSION }}
+          -o ./packages
+
+      - name: Push to NuGet
+        run: >
+          dotnet nuget push ./packages/*.nupkg
+          --source https://api.nuget.org/v3/index.json
+          --api-key ${{ secrets.NUGET_API_KEY }}
+          --skip-duplicate
+

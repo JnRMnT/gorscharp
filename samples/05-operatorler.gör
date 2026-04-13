@@ -1,0 +1,33 @@
+// Gör# Örnek 05 — Operatörler ve İfadeler
+// Türkçe operatörlerin kullanımı
+
+a: sayı 10 olsun;
+b: sayı 3 olsun;
+
+// Aritmetik
+toplam: sayı a + b olsun;
+fark: sayı a - b olsun;
+çarpım: sayı a * b olsun;
+bölüm: sayı a / b olsun;
+kalan: sayı a % b olsun;
+
+// Karşılaştırma
+eğer a büyüktür b {
+    "a, b'den büyüktür" yeniSatıraYazdır;
+}
+
+eğer a eşitDeğildir b {
+    "a ve b eşit değildir" yeniSatıraYazdır;
+}
+
+// Mantıksal
+x: mantık doğru olsun;
+y: mantık yanlış olsun;
+
+eğer x ve değil y {
+    "x doğru VE y yanlış" yeniSatıraYazdır;
+}
+
+eğer x veya y {
+    "En az biri doğru" yeniSatıraYazdır;
+}
