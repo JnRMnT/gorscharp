@@ -524,6 +524,12 @@ internal sealed class SymbolTableBuilder : IAstVisitor<object?>
         return null;
     }
 
+    public object? VisitSuffixedExpression(SuffixedExpressionNode node)
+    {
+        // Visit the underlying expression, suffix is semantic only
+        return node.Expression.Accept(this);
+    }
+
     private int CreateScope(int? parentId)
     {
         var scopeId = _nextScopeId++;
