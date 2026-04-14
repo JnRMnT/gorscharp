@@ -1,4 +1,5 @@
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using GorSharp.Core.Ast;
 using GorSharp.Morphology;
 
@@ -69,13 +70,47 @@ public class AstBuildingVisitor : GorSharpBaseVisitor<AstNode>
     public override AstNode VisitWriteStatement(GorSharpParser.WriteStatementContext ctx)
     {
         var expr = Visit(ctx.expression());
+        var suffixToken = ctx.IDENTIFIER();
+        if (suffixToken is not null)
+        {
+            expr = WrapWithSuffix(expr, suffixToken, ctx);
+        }
         return new PrintNode(expr, isWriteLine: false, Loc(ctx));
     }
 
     public override AstNode VisitWriteLineStatement(GorSharpParser.WriteLineStatementContext ctx)
     {
         var expr = Visit(ctx.expression());
+        var suffixToken = ctx.IDENTIFIER();
+        if (suffixToken is not null)
+        {
+            expr = WrapWithSuffix(expr, suffixToken, ctx);
+        }
         return new PrintNode(expr, isWriteLine: true, Loc(ctx));
+    }
+
+    /// <summary>
+    /// Wraps the expression in a SuffixedExpressionNode with resolved case information.
+    /// </summary>
+    private AstNode WrapWithSuffix(AstNode expr, Antlr4.Runtime.Tree.ITerminalNode suffixToken, ParserRuleContext ctx)
+    {
+        var suffixText = suffixToken.GetText();
+        var resolvedCase = _suffixResolver.DetectCaseFromBareSuffix(suffixText);
+
+        // Diagnostic if suffix is not recognized
+        if (string.IsNullOrWhiteSpace(resolvedCase))
+        {
+            var symbol = suffixToken.Symbol;
+            _diagnostics?.Add(new GorSharp.Core.Diagnostics.Diagnostic(
+                GorSharp.Core.Diagnostics.DiagnosticSeverity.Error,
+                "GOR1007",
+                $"Tanınmayan ek: '{suffixText}'",
+                _fileName,
+                symbol.Line,
+                symbol.Column));
+        }
+
+        return new SuffixedExpressionNode(expr, suffixText, resolvedCase, Loc(ctx));
     }
 
     public override AstNode VisitSuffixMethodStatement(GorSharpParser.SuffixMethodStatementContext ctx)
@@ -101,7 +136,7 @@ public class AstBuildingVisitor : GorSharpBaseVisitor<AstNode>
         if (verbs.Length == 1 && !hasTailPrint)
         {
             if (string.IsNullOrWhiteSpace(firstResolution?.CSharpMethod))
-                ReportMorphologyMappingMissing(targetToken, firstVerb, Loc(verbs[0].Symbol));
+                ReportMorphologyMappingMissing(targetToken, firstVerb, firstResolution?.SuffixCase, Loc(verbs[0].Symbol));
 
             return new SuffixMethodCallNode(
                 targetToken,
@@ -140,7 +175,7 @@ public class AstBuildingVisitor : GorSharpBaseVisitor<AstNode>
             }
 
             if (string.IsNullOrWhiteSpace(resolvedMethod))
-                ReportMorphologyMappingMissing(targetToken, verb, Loc(verbs[i].Symbol));
+                ReportMorphologyMappingMissing(targetToken, verb, suffixCase, Loc(verbs[i].Symbol));
 
             steps.Add(new SuffixMethodChainStep(
                 verb,
@@ -168,7 +203,7 @@ public class AstBuildingVisitor : GorSharpBaseVisitor<AstNode>
                 tailResolvedMember = _suffixResolver.ResolvePropertyMember(tailPropertyWord);
 
             if (string.IsNullOrWhiteSpace(tailResolvedMember))
-                ReportMorphologyMappingMissing(targetToken, tailPropertyWord, Loc(identifiers[^1].Symbol));
+                ReportMorphologyMappingMissing(targetToken, tailPropertyWord, suffixCase, Loc(identifiers[^1].Symbol), isProperty: true);
         }
 
         return new SuffixMethodChainNode(
@@ -568,19 +603,48 @@ public class AstBuildingVisitor : GorSharpBaseVisitor<AstNode>
             token.Column));
     }
 
-    private void ReportMorphologyMappingMissing(string targetToken, string word, SourceLocation loc)
+    private void ReportMorphologyMappingMissing(string targetToken, string word, string? suffixCase, SourceLocation loc, bool isProperty = false)
     {
         if (!_suffixResolver.HasConfiguredSuffixMappings)
         {
             return;
         }
 
+        var message = string.IsNullOrWhiteSpace(suffixCase)
+            ? $"Sonek çözümleme bulundu ancak sözlük eşlemesi yok: '{targetToken} {word}'."
+            : BuildMorphologyMappingMissingMessage(targetToken, word, suffixCase!, isProperty);
+
         _diagnostics?.Add(new GorSharp.Core.Diagnostics.Diagnostic(
             GorSharp.Core.Diagnostics.DiagnosticSeverity.Warning,
             GorSharp.Core.Diagnostics.DiagnosticCodes.MorphologyMappingMissing,
-            $"Sonek çözümleme bulundu ancak sözlük eşlemesi yok: '{targetToken} {word}'.",
+            message,
             _fileName,
             loc.Line,
             loc.Column));
     }
+
+    private string BuildMorphologyMappingMissingMessage(string targetToken, string word, string suffixCase, bool isProperty)
+    {
+        var suggestions = isProperty
+            ? _suffixResolver.GetKnownPropertiesForCase(suffixCase)
+            : _suffixResolver.GetKnownVerbsForCase(suffixCase);
+
+        var category = isProperty ? "özellikler" : "fiiller";
+        var baseMessage = $"Sonek çözümleme bulundu ancak {DescribeSuffixCase(suffixCase)} durumu için sözlük eşlemesi yok: '{targetToken} {word}'.";
+
+        if (suggestions.Count == 0)
+            return baseMessage;
+
+        return $"{baseMessage} Bilinen {category}: {string.Join(", ", suggestions)}.";
+    }
+
+    private static string DescribeSuffixCase(string suffixCase) => suffixCase switch
+    {
+        "dative" => "yönelme",
+        "ablative" => "ayrılma",
+        "genitive" => "ilgi",
+        "locative" => "bulunma",
+        "accusative" => "belirtme",
+        _ => suffixCase
+    };
 }

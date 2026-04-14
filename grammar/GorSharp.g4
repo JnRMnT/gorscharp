@@ -33,9 +33,10 @@ typeName
     ;
 
 // ── Print (SOV) ────────────────────────────────────────────────
+// Operand can be followed by optional suffix: "Geçti"yi yeniSatıraYazdır;
 printStatement
-    : expression YAZDIR SEMI                                        #WriteStatement
-    | expression YENISATIRA_YAZDIR SEMI                             #WriteLineStatement
+    : expression IDENTIFIER? YAZDIR SEMI                            #WriteStatement
+    | expression IDENTIFIER? YENISATIRA_YAZDIR SEMI                 #WriteLineStatement
     ;
 
 // ── Suffix-Based Natural Method Call ───────────────────────────
