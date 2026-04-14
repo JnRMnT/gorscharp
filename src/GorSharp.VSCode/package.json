@@ -66,6 +66,16 @@
         "command": "gorsharp.showMirror",
         "title": "Gör#: Ayna Paneli (Mirror Panel)",
         "icon": "$(split-horizontal)"
+      },
+      {
+        "command": "gorsharp.refreshMirror",
+        "title": "Gör#: Aynayı Yenile",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "gorsharp.importFromCSharp",
+        "title": "Gör#: C# Dosyasını İçe Aktar",
+        "icon": "$(arrow-down)"
       }
     ],
     "menus": {
@@ -79,6 +89,16 @@
           "command": "gorsharp.showMirror",
           "when": "resourceLangId == gorsharp",
           "group": "navigation"
+        },
+        {
+          "command": "gorsharp.refreshMirror",
+          "when": "resourceLangId == gorsharp",
+          "group": "navigation"
+        },
+        {
+          "command": "gorsharp.importFromCSharp",
+          "when": "resourceLangId == csharp",
+          "group": "navigation"
         }
       ]
     },
@@ -89,6 +109,11 @@
           "type": "string",
           "default": "",
           "description": "Dil sunucusu (gorsharp-lsp) yolu. Boş bırakılırsa, uzantıyla birlikte gelen sunucu kullanılır."
+        },
+        "gorsharp.cliPath": {
+          "type": "string",
+          "default": "",
+          "description": "CLI (gorsharp) yolu. Boş bırakılırsa, uzantıyla birlikte gelen araç ya da PATH içindeki komut kullanılır."
         },
         "gorsharp.sozlukPath": {
           "type": "string",

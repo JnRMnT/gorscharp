@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { execFile } from 'child_process';
 import {
     LanguageClient,
     LanguageClientOptions,
@@ -11,8 +12,10 @@ let client: LanguageClient | undefined;
 let mirrorPanel: vscode.WebviewPanel | undefined;
 let outputChannel: vscode.OutputChannel;
 let mirrorLogoUri = '';
+let extensionContext: vscode.ExtensionContext;
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
+    extensionContext = context;
     outputChannel = vscode.window.createOutputChannel('Gör#');
     outputChannel.appendLine('Gör# uzantısı etkinleştiriliyor...');
 
@@ -23,7 +26,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     context.subscriptions.push(
         vscode.commands.registerCommand('gorsharp.transpile', transpileCommand),
         vscode.commands.registerCommand('gorsharp.run', runCommand),
-        vscode.commands.registerCommand('gorsharp.showMirror', () => showMirrorPanel(context))
+        vscode.commands.registerCommand('gorsharp.showMirror', () => showMirrorPanel(context)),
+        vscode.commands.registerCommand('gorsharp.refreshMirror', refreshMirrorCommand),
+        vscode.commands.registerCommand('gorsharp.importFromCSharp', importFromCSharpCommand)
     );
 
     outputChannel.appendLine('Gör# uzantısı etkin.');
@@ -220,7 +225,7 @@ async function transpileCommand(): Promise<void> {
         : 'natural';
     const terminal = vscode.window.createTerminal('Gör# Dönüştür');
     terminal.show();
-    terminal.sendText(`gorsharp transpile "${filePath}" --mode ${mode}`);
+    terminal.sendText(`${quoteForShell(await resolveCliCommand(extensionContext))} transpile ${quoteForShell(filePath)} --mode ${mode}`);
 }
 
 async function runCommand(): Promise<void> {
@@ -239,7 +244,87 @@ async function runCommand(): Promise<void> {
         : 'natural';
     const terminal = vscode.window.createTerminal('Gör# Çalıştır');
     terminal.show();
-    terminal.sendText(`gorsharp run "${filePath}" --mode ${mode}`);
+    terminal.sendText(`${quoteForShell(await resolveCliCommand(extensionContext))} run ${quoteForShell(filePath)} --mode ${mode}`);
+}
+
+async function refreshMirrorCommand(): Promise<void> {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor || editor.document.languageId !== 'gorsharp') {
+        vscode.window.showWarningMessage('Lütfen bir .gör dosyası açın.');
+        return;
+    }
+
+    await editor.document.save();
+    showMirrorPanel(extensionContext);
+
+    const filePath = editor.document.uri.fsPath;
+    const mode = vscode.workspace.getConfiguration('gorsharp').get<string>('parsingMode', 'natural') === 'strict'
+        ? 'strict'
+        : 'natural';
+
+    try {
+        const result = await runCliCommand(extensionContext, ['transpile', filePath, '--mode', mode], editor.document.uri);
+        updateMirror(editor.document.uri.toString(), result.stdout);
+        vscode.window.showInformationMessage('Gör# aynası güncellendi.');
+    } catch (error) {
+        const message = getErrorMessage(error);
+        outputChannel.appendLine(`Ayna yenileme hatası: ${message}`);
+        outputChannel.show(true);
+        vscode.window.showErrorMessage(`Ayna yenilenemedi: ${message}`);
+    }
+}
+
+async function importFromCSharpCommand(): Promise<void> {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor || editor.document.languageId !== 'csharp') {
+        vscode.window.showWarningMessage('Lütfen bir C# dosyası açın.');
+        return;
+    }
+
+    await editor.document.save();
+
+    const inputPath = editor.document.uri.fsPath;
+    const defaultOutput = editor.document.uri.with({
+        path: editor.document.uri.path.replace(/\.cs$/i, '.gör')
+    });
+
+    const outputUri = await vscode.window.showSaveDialog({
+        defaultUri: defaultOutput,
+        filters: {
+            'Gör# Dosyası': ['gör']
+        },
+        saveLabel: 'Gör# Olarak İçe Aktar'
+    });
+
+    if (!outputUri) {
+        return;
+    }
+
+    try {
+        const result = await runCliCommand(extensionContext, ['fromcs', inputPath, '-o', outputUri.fsPath, '--explain'], editor.document.uri);
+
+        const importedDocument = await vscode.workspace.openTextDocument(outputUri);
+        await vscode.window.showTextDocument(importedDocument, vscode.ViewColumn.Beside);
+
+        outputChannel.clear();
+        outputChannel.appendLine('C# → Gör# içe aktarma tamamlandı.');
+        if (result.stdout.trim().length > 0) {
+            outputChannel.appendLine('');
+            outputChannel.append(result.stdout);
+        }
+        if (result.stderr.trim().length > 0) {
+            outputChannel.appendLine('');
+            outputChannel.append(result.stderr);
+        }
+        outputChannel.show(true);
+
+        vscode.window.showInformationMessage('C# dosyası Gör# olarak içe aktarıldı.');
+    } catch (error) {
+        const message = getErrorMessage(error);
+        outputChannel.appendLine(`İçe aktarma hatası: ${message}`);
+        outputChannel.show(true);
+        vscode.window.showErrorMessage(`C# içe aktarma başarısız: ${message}`);
+    }
 }
 
 // ── Helpers ───────────────────────────────────────────────
@@ -251,4 +336,62 @@ async function fileExists(filePath: string): Promise<boolean> {
     } catch {
         return false;
     }
+}
+
+async function resolveCliCommand(context: vscode.ExtensionContext): Promise<string> {
+    const config = vscode.workspace.getConfiguration('gorsharp');
+    const configuredPath = config.get<string>('cliPath', '').trim();
+    if (configuredPath) {
+        return configuredPath;
+    }
+
+    const bundled = path.join(context.extensionPath, 'tools', process.platform === 'win32' ? 'gorsharp.exe' : 'gorsharp');
+    if (await fileExists(bundled)) {
+        return bundled;
+    }
+
+    return 'gorsharp';
+}
+
+async function runCliCommand(
+    context: vscode.ExtensionContext,
+    args: string[],
+    documentUri?: vscode.Uri
+): Promise<{ stdout: string; stderr: string }> {
+    const command = await resolveCliCommand(context);
+    const workspaceFolder = documentUri ? vscode.workspace.getWorkspaceFolder(documentUri) : undefined;
+
+    return new Promise((resolve, reject) => {
+        execFile(
+            command,
+            args,
+            {
+                cwd: workspaceFolder?.uri.fsPath
+            },
+            (error, stdout, stderr) => {
+                if (error) {
+                    reject(new Error([error.message, stderr].filter(Boolean).join('\n')));
+                    return;
+                }
+
+                resolve({ stdout, stderr });
+            }
+        );
+    });
+}
+
+function quoteForShell(value: string): string {
+    if (!/[\s"]/u.test(value)) {
+        return value;
+    }
+
+    return `"${value.replace(/"/g, '\\"')}"`;
+}
+
+function getErrorMessage(error: unknown): string {
+    if (error instanceof Error) {
+        return error.message;
+    }
+
+    return String(error);
 }
