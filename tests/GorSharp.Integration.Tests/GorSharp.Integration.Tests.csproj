@@ -19,7 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\GorSharp.CLI\GorSharp.CLI.csproj" />
     <ProjectReference Include="..\..\src\GorSharp.Core\GorSharp.Core.csproj" />
+    <ProjectReference Include="..\..\src\GorSharp.LanguageServer\GorSharp.LanguageServer.csproj" />
     <ProjectReference Include="..\..\src\GorSharp.Parser\GorSharp.Parser.csproj" />
     <ProjectReference Include="..\..\src\GorSharp.Morphology\GorSharp.Morphology.csproj" />
     <ProjectReference Include="..\..\src\GorSharp.Transpiler\GorSharp.Transpiler.csproj" />
