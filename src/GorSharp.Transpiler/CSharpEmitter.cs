@@ -218,6 +218,13 @@ public class CSharpEmitter : IAstVisitor<string>
         return $"{node.TargetStem}.{member}";
     }
 
+    public string VisitSuffixedExpression(SuffixedExpressionNode node)
+    {
+        // The suffix is a semantic marker for case resolution, not part of the output.
+        // Emit the underlying expression unchanged.
+        return node.Expression.Accept(this);
+    }
+
     public string VisitFunctionDefinition(FunctionDefinitionNode node)
     {
         var returnType = node.ReturnType is not null ? MapType(node.ReturnType) : "void";
