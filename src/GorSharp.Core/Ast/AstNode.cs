@@ -47,4 +47,5 @@ public interface IAstVisitor<out T>
     T VisitSuffixMethodChain(SuffixMethodChainNode node);
     T VisitSuffixPropertyAccess(SuffixPropertyAccessNode node);
     T VisitFunctionDefinition(FunctionDefinitionNode node);
+    T VisitSuffixedExpression(SuffixedExpressionNode node);
 }
