@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GorSharp.Core\GorSharp.Core.csproj" />
     <ProjectReference Include="..\GorSharp.Parser\GorSharp.Parser.csproj" />
     <ProjectReference Include="..\GorSharp.Morphology\GorSharp.Morphology.csproj" />

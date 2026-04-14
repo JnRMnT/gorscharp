@@ -203,7 +203,7 @@ public class Program
         if (args.Length == 0)
         {
             Console.Error.WriteLine("Hata: C# dosya yolu belirtilmedi.");
-            Console.Error.WriteLine("Kullanim: gorsharp fromcs <dosya.cs> [-o cikti.g�r]");
+            Console.Error.WriteLine("Kullanim: gorsharp fromcs <dosya.cs> [-o cikti.gör] [--explain]");
             return 1;
         }
 
@@ -217,12 +217,28 @@ public class Program
         var outputPath = args.Length >= 3 && args[1] == "-o"
             ? args[2]
             : Path.ChangeExtension(inputPath, ".g�r");
+        var explain = args.Any(arg => string.Equals(arg, "--explain", StringComparison.OrdinalIgnoreCase));
 
         var source = File.ReadAllText(inputPath);
-        var converted = CSharpToGorConverter.Convert(source);
-        File.WriteAllText(outputPath, converted);
+        var conversion = CSharpToGorConverter.ConvertWithNarration(source);
+        File.WriteAllText(outputPath, conversion.GorSource);
 
         Console.WriteLine($"�ikti yazildi: {outputPath}");
+
+        if (explain)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Açıklamalar:");
+            foreach (var explanation in conversion.Explanations)
+            {
+                var linePrefix = explanation.SourceLine > 0 ? $"Satır {explanation.SourceLine}" : "Satır bilinmiyor";
+                Console.WriteLine($"- {linePrefix}: {explanation.Title}");
+                Console.WriteLine($"  C#: {explanation.CSharpSnippet}");
+                Console.WriteLine($"  Gör#: {explanation.GorSnippet}");
+                Console.WriteLine($"  Not: {explanation.Message}");
+            }
+        }
+
         return 0;
     }
 
@@ -244,6 +260,7 @@ public class Program
         Console.WriteLine("  run <dosya.gör> [--mode strict|natural]         Çevir ve çalıştır");
         Console.WriteLine("  diff <dosya.g�r>              G�r# ve C# yanyana g�ster");
         Console.WriteLine("  fromcs <dosya.cs>             Basit C# kodunu G�r# s�zdizimine d�n�st�r");
+        Console.WriteLine("    --explain                   D�n�st�rme adimlarini anlatan e�itsel notlar yazdir");
     }
 
     private static MorphologyNormalizationResult NormalizeMorphology(ProgramNode ast, string source, string filePath)
