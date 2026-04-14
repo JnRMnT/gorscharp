@@ -85,6 +85,21 @@ public class CodeActionHandler : ICodeActionHandler
                 var action = CreateGOR2003Action(lspDiag, content.Text, uri);
                 if (action != null) actions.Add(action);
             }
+            else if (code == "GOR2007") // Function argument type mismatch
+            {
+                var action = CreateGOR2007Action(lspDiag, uri);
+                if (action != null) actions.Add(action);
+            }
+            else if (code == "GOR2008") // Binary operand type mismatch
+            {
+                var action = CreateGOR2008Action(lspDiag, uri);
+                if (action != null) actions.Add(action);
+            }
+            else if (code == "GOR2010") // Unary operand type mismatch
+            {
+                var action = CreateGOR2010Action(lspDiag, content.Text, uri);
+                if (action != null) actions.Add(action);
+            }
         }
 
         return Task.FromResult<CommandOrCodeActionContainer?>(new CommandOrCodeActionContainer(actions));
@@ -121,7 +136,7 @@ public class CodeActionHandler : ICodeActionHandler
 
         var codeAction = new CodeAction
         {
-            Title = $"Create variable '{symbolName}'",
+            Title = $"Değişken oluştur: '{symbolName}'",
             Kind = CodeActionKind.QuickFix,
             Diagnostics = new Container<Diagnostic>(diagnostic),
             Edit = new WorkspaceEdit
@@ -156,7 +171,7 @@ public class CodeActionHandler : ICodeActionHandler
 
         var codeAction = new CodeAction
         {
-            Title = $"Rename to '{newName}'",
+            Title = $"Yeniden adlandır: '{newName}'",
             Kind = CodeActionKind.QuickFix,
             Diagnostics = new Container<Diagnostic>(diagnostic),
             Edit = new WorkspaceEdit
@@ -195,16 +210,16 @@ public class CodeActionHandler : ICodeActionHandler
             
             if (diff > 0)
             {
-                title = $"Add {diff} argument(s) to '{functionName}' (expects {expected})";
+                title = $"'{functionName}' çağrısına {diff} argüman ekle (beklenen: {expected})";
             }
             else
             {
-                title = $"Remove {-diff} argument(s) from '{functionName}' (expects {expected})";
+                title = $"'{functionName}' çağrısından {-diff} argüman kaldır (beklenen: {expected})";
             }
         }
         else
         {
-            title = $"Check parameter count for '{functionName}'";
+            title = $"'{functionName}' için parametre sayısını düzelt";
         }
 
         // This is an informational action; user can see the issue and fix manually
@@ -214,6 +229,94 @@ public class CodeActionHandler : ICodeActionHandler
             Kind = CodeActionKind.QuickFix,
             Diagnostics = new Container<Diagnostic>(diagnostic),
             IsPreferred = false
+        };
+
+        return codeAction;
+    }
+
+    private CommandOrCodeAction? CreateGOR2007Action(Diagnostic diagnostic, DocumentUri uri)
+    {
+        // GOR2007: argument type mismatch
+        var codeAction = new CodeAction
+        {
+            Title = "Argüman türünü parametre türü ile eşleştir",
+            Kind = CodeActionKind.QuickFix,
+            Diagnostics = new Container<Diagnostic>(diagnostic),
+            IsPreferred = false
+        };
+
+        return codeAction;
+    }
+
+    private CommandOrCodeAction? CreateGOR2008Action(Diagnostic diagnostic, DocumentUri uri)
+    {
+        // GOR2008: binary operand mismatch
+        var codeAction = new CodeAction
+        {
+            Title = "İşlemdeki iki tarafın türünü uyumlu hale getir",
+            Kind = CodeActionKind.QuickFix,
+            Diagnostics = new Container<Diagnostic>(diagnostic),
+            IsPreferred = false
+        };
+
+        return codeAction;
+    }
+
+    private CommandOrCodeAction? CreateGOR2010Action(Diagnostic diagnostic, string content, DocumentUri uri)
+    {
+        // GOR2010: unary operand mismatch. Provide a safe fix by removing the unary operator.
+        var lineIndex = diagnostic.Range.Start.Line;
+        var lines = content.Split(new[] { "\r\n", "\n" }, System.StringSplitOptions.None);
+        if (lineIndex < 0 || lineIndex >= lines.Length)
+            return null;
+
+        var lineText = lines[lineIndex];
+        string target;
+        string replacement;
+        string title;
+
+        if (diagnostic.Message.Contains("'değil'", System.StringComparison.Ordinal))
+        {
+            target = "değil ";
+            replacement = string.Empty;
+            title = "'değil' işlemini kaldır";
+        }
+        else if (diagnostic.Message.Contains("'-'", System.StringComparison.Ordinal))
+        {
+            target = "- ";
+            replacement = string.Empty;
+            title = "Tekli '-' işlemini kaldır";
+        }
+        else
+        {
+            return null;
+        }
+
+        var column = lineText.IndexOf(target, System.StringComparison.Ordinal);
+        if (column < 0)
+            return null;
+
+        var edit = new TextEdit
+        {
+            Range = new OmniSharp.Extensions.LanguageServer.Protocol.Models.Range(
+                new Position(lineIndex, column),
+                new Position(lineIndex, column + target.Length)),
+            NewText = replacement
+        };
+
+        var codeAction = new CodeAction
+        {
+            Title = title,
+            Kind = CodeActionKind.QuickFix,
+            Diagnostics = new Container<Diagnostic>(diagnostic),
+            Edit = new WorkspaceEdit
+            {
+                Changes = new Dictionary<DocumentUri, IEnumerable<TextEdit>>
+                {
+                    { uri, new[] { edit } }
+                }
+            },
+            IsPreferred = true
         };
 
         return codeAction;

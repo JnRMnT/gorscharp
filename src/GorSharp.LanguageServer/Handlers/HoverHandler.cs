@@ -14,17 +14,20 @@ public class HoverHandler : HoverHandlerBase
     private readonly TranspilationService _transpiler;
     private readonly BuiltInSignaturesService _builtInSignatures;
     private readonly SymbolAnalysisService _symbols;
+    private readonly SuffixExplanationService _suffixExplanations;
 
     public HoverHandler(
         DocumentStore store,
         TranspilationService transpiler,
         BuiltInSignaturesService builtInSignatures,
-        SymbolAnalysisService symbols)
+        SymbolAnalysisService symbols,
+        SuffixExplanationService suffixExplanations)
     {
         _store = store;
         _transpiler = transpiler;
         _builtInSignatures = builtInSignatures;
         _symbols = symbols;
+        _suffixExplanations = suffixExplanations;
     }
 
     public override Task<Hover?> Handle(HoverParams request, CancellationToken cancellationToken)
@@ -58,6 +61,28 @@ public class HoverHandler : HoverHandlerBase
                 LanguageServerTrace.Info($"Hover resolved from symbol analysis for '{occurrence.Name}'.");
                 return Task.FromResult<Hover?>(hover);
             }
+        }
+
+        var suffixMatch = _suffixExplanations.FindExplanationAtPosition(
+            doc.Text,
+            (int)request.Position.Line,
+            (int)request.Position.Character);
+        if (suffixMatch is not null)
+        {
+            LanguageServerTrace.Info($"Hover resolved from suffix explanation for '{suffixMatch.Explanation.RawToken}'.");
+            return Task.FromResult<Hover?>(new Hover
+            {
+                Contents = new MarkedStringsOrMarkupContent(new MarkupContent
+                {
+                    Kind = MarkupKind.Markdown,
+                    Value = SuffixExplanationService.FormatHoverMarkdown(suffixMatch.Explanation)
+                }),
+                Range = new OmniSharp.Extensions.LanguageServer.Protocol.Models.Range
+                {
+                    Start = new Position(suffixMatch.Line, suffixMatch.StartColumn),
+                    End = new Position(suffixMatch.Line, suffixMatch.EndColumn)
+                }
+            });
         }
 
         // Fallback: resolve by extracted word for function signatures first

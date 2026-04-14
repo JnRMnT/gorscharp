@@ -54,6 +54,7 @@ public static class Program
                     services.AddSingleton<DocumentStore>();
                     services.AddSingleton<ParsingModeService>();
                     services.AddSingleton<TranspilationService>();
+                    services.AddSingleton<SuffixExplanationService>();
                     services.AddSingleton<SymbolAnalysisService>();
                     services.AddSingleton<BuiltInSignaturesService>();
                     services.AddSingleton<FormatterService>();

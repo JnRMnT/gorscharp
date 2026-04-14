@@ -202,6 +202,12 @@ internal sealed class GorSharpFormatter : IAstVisitor<string>
         return $"fonksiyon {node.Name}({parameters}){returnType} {node.Body.Accept(this)}";
     }
 
+    public string VisitSuffixedExpression(SuffixedExpressionNode node)
+    {
+        // Format the underlying expression, suffix is semantic only
+        return node.Expression.Accept(this);
+    }
+
     private string FormatStatement(AstNode statement)
     {
         var formatted = statement.Accept(this);

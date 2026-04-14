@@ -10,15 +10,18 @@ public class CompletionHandler : CompletionHandlerBase
     private readonly DocumentStore _store;
     private readonly TranspilationService _transpiler;
     private readonly SymbolAnalysisService _symbols;
+    private readonly SuffixExplanationService _suffixExplanations;
 
     public CompletionHandler(
         DocumentStore store,
         TranspilationService transpiler,
-        SymbolAnalysisService symbols)
+        SymbolAnalysisService symbols,
+        SuffixExplanationService suffixExplanations)
     {
         _store = store;
         _transpiler = transpiler;
         _symbols = symbols;
+        _suffixExplanations = suffixExplanations;
     }
 
     public override Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
@@ -32,37 +35,81 @@ public class CompletionHandler : CompletionHandlerBase
         if (doc is not null)
         {
             var filePath = request.TextDocument.Uri.GetFileSystemPath() ?? request.TextDocument.Uri.ToString();
-            var analysis = _symbols.Analyze(doc.Text, filePath);
-            var candidates = analysis.Symbols.GetCompletionCandidatesAt(
+            try
+            {
+                var analysis = _symbols.Analyze(doc.Text, filePath);
+                var candidates = analysis.Symbols.GetCompletionCandidatesAt(
+                    (int)request.Position.Line,
+                    (int)request.Position.Character);
+
+                foreach (var declaration in candidates)
+                {
+                    if (!seen.Add(declaration.Name))
+                        continue;
+
+                    var kind = declaration.Kind switch
+                    {
+                        GSymbolKind.Function => CompletionItemKind.Function,
+                        GSymbolKind.Parameter => CompletionItemKind.Variable,
+                        _ => CompletionItemKind.Variable
+                    };
+
+                    var detail = declaration.Kind switch
+                    {
+                        GSymbolKind.Function => BuildFunctionDetail(analysis.Symbols, declaration.Name),
+                        GSymbolKind.Parameter => BuildValueDetail("Parametre", declaration.InferredType),
+                        _ => BuildValueDetail("Kullanıcı değişkeni", declaration.InferredType)
+                    };
+
+                    items.Add(new CompletionItem
+                    {
+                        Label = declaration.Name,
+                        Kind = kind,
+                        Detail = detail,
+                        InsertText = declaration.Name
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                LanguageServerTrace.Warning($"Completion symbol analysis skipped for partial document '{filePath}': {ex.Message}");
+            }
+
+            var suffixContext = _suffixExplanations.FindCompletionContext(
+                doc.Text,
                 (int)request.Position.Line,
                 (int)request.Position.Character);
-
-            foreach (var declaration in candidates)
+            if (suffixContext is not null)
             {
-                if (!seen.Add(declaration.Name))
-                    continue;
-
-                var kind = declaration.Kind switch
+                foreach (var suggestion in suffixContext.Explanation.Suggestions)
                 {
-                    GSymbolKind.Function => CompletionItemKind.Function,
-                    GSymbolKind.Parameter => CompletionItemKind.Variable,
-                    _ => CompletionItemKind.Variable
-                };
+                    if (!string.IsNullOrWhiteSpace(suffixContext.PartialWord)
+                        && !suggestion.Word.StartsWith(suffixContext.PartialWord, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
 
-                var detail = declaration.Kind switch
-                {
-                    GSymbolKind.Function => BuildFunctionDetail(analysis.Symbols, declaration.Name),
-                    GSymbolKind.Parameter => BuildValueDetail("Parametre", declaration.InferredType),
-                    _ => BuildValueDetail("Kullanıcı değişkeni", declaration.InferredType)
-                };
+                    if (!seen.Add(suggestion.Word))
+                        continue;
 
-                items.Add(new CompletionItem
-                {
-                    Label = declaration.Name,
-                    Kind = kind,
-                    Detail = detail,
-                    InsertText = declaration.Name
-                });
+                    items.Add(new CompletionItem
+                    {
+                        Label = suggestion.Word,
+                        Kind = suggestion.Kind == SuffixSuggestionKind.Property
+                            ? CompletionItemKind.Property
+                            : CompletionItemKind.Method,
+                        Detail = suggestion.Kind == SuffixSuggestionKind.Property
+                            ? $"{suffixContext.Explanation.CaseDisplayName} durumu özelliği → {suggestion.CSharp}"
+                            : $"{suffixContext.Explanation.CaseDisplayName} durumu fiili → {suggestion.CSharp}",
+                        Documentation = new MarkupContent
+                        {
+                            Kind = MarkupKind.Markdown,
+                            Value = BuildSuffixSuggestionDocumentation(suffixContext.Explanation, suggestion)
+                        },
+                        InsertText = suggestion.Word,
+                        SortText = $"0_{suggestion.Word}"
+                    });
+                }
             }
         }
 
@@ -216,5 +263,25 @@ public class CompletionHandler : CompletionHandlerBase
         return string.IsNullOrWhiteSpace(inferredType)
             ? prefix
             : $"{prefix}: {inferredType}";
+    }
+
+    private static string BuildSuffixSuggestionDocumentation(SuffixExplanation explanation, SuffixSuggestion suggestion)
+    {
+        var lines = new List<string>
+        {
+            $"**{suggestion.Word}**",
+            string.Empty,
+            $"Durum: `{explanation.CaseDisplayName}` (`{explanation.SuffixCase}`)",
+            explanation.Description,
+            $"C#: `{suggestion.CSharp}`"
+        };
+
+        if (!string.IsNullOrWhiteSpace(suggestion.Description))
+        {
+            lines.Add(string.Empty);
+            lines.Add(suggestion.Description);
+        }
+
+        return string.Join("\n\n", lines);
     }
 }
