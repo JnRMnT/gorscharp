@@ -30,6 +30,15 @@ public record AblativeNumberResolution(
     string SuffixCase);
 
 /// <summary>
+/// Detailed result of case detection for a suffixed token.
+/// </summary>
+public record SuffixCaseAnalysis(
+    string? SuffixCase,
+    bool UsedMorphology,
+    bool UsedFallbackMarkers,
+    string? MorphologyFailureMessage);
+
+/// <summary>
 /// Resolves Turkish suffixes on identifiers using ZemberekDotNet morphology
 /// and sozluk.json suffix mappings.
 ///
@@ -45,11 +54,13 @@ public class SuffixResolver
     private readonly Lazy<ZemberekDotNet.Morphology.TurkishMorphology> _morphology;
     private readonly Dictionary<string, List<string>> _fallbackMarkers;
 
-    public SuffixResolver(SozlukData sozluk)
+    public SuffixResolver(
+        SozlukData sozluk,
+        Func<ZemberekDotNet.Morphology.TurkishMorphology>? morphologyFactory = null)
     {
         _sozluk = sozluk;
         _morphology = new Lazy<ZemberekDotNet.Morphology.TurkishMorphology>(
-            () => ZemberekDotNet.Morphology.TurkishMorphology.CreateWithDefaults());
+            morphologyFactory ?? (() => ZemberekDotNet.Morphology.TurkishMorphology.CreateWithDefaults()));
         _fallbackMarkers = BuildFallbackMarkers(_sozluk);
     }
 
@@ -60,13 +71,51 @@ public class SuffixResolver
     /// </summary>
     public string? DetectCase(string word)
     {
+        return AnalyzeCase(word).SuffixCase;
+    }
+
+    /// <summary>
+    /// Analyzes a suffixed word and reports whether morphology or fallback markers were used.
+    /// </summary>
+    public SuffixCaseAnalysis AnalyzeCase(string word)
+    {
         // Strip apostrophe for analysis
         var normalized = word.Replace("'", "").Replace("\u2019", "");
-        var morphCase = DetectCaseWithMorphology(normalized);
+        var morphCase = DetectCaseWithMorphology(normalized, out var morphologyFailureMessage);
         if (!string.IsNullOrWhiteSpace(morphCase))
-            return morphCase;
+            return new SuffixCaseAnalysis(morphCase, UsedMorphology: true, UsedFallbackMarkers: false, MorphologyFailureMessage: morphologyFailureMessage);
 
-        return DetectCaseFromMarkers(word);
+        var fallbackCase = DetectCaseFromMarkers(word);
+        return new SuffixCaseAnalysis(
+            fallbackCase,
+            UsedMorphology: false,
+            UsedFallbackMarkers: !string.IsNullOrWhiteSpace(fallbackCase),
+            MorphologyFailureMessage: morphologyFailureMessage);
+    }
+
+    /// <summary>
+    /// Detects the case from a bare suffix text (e.g., "yi", "den") without a word context.
+    /// Used for print operand suffix resolution like "Geçti"yi.
+    /// Returns the case name ("accusative", "dative", etc.) or null if not recognized.
+    /// </summary>
+    public string? DetectCaseFromBareSuffix(string suffixText)
+    {
+        if (string.IsNullOrWhiteSpace(suffixText))
+            return null;
+
+        var normalizedSuffix = suffixText.Replace("\u2019", "'").ToLowerInvariant().Trim('\'');
+
+        // Check against fallback markers
+        foreach (var (caseName, markers) in _fallbackMarkers)
+        {
+            foreach (var marker in markers)
+            {
+                if (string.Equals(normalizedSuffix, marker, StringComparison.OrdinalIgnoreCase))
+                    return caseName;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -163,6 +212,74 @@ public class SuffixResolver
         return null;
     }
 
+    public IReadOnlyList<string> GetKnownVerbsForCase(string suffixCase)
+    {
+        if (!_sozluk.Suffixes.TryGetValue(suffixCase, out var suffixEntry))
+            return [];
+
+        return suffixEntry.VerbMappings.Keys
+            .OrderBy(key => key, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    public IReadOnlyList<string> GetKnownPropertiesForCase(string suffixCase)
+    {
+        if (!_sozluk.Suffixes.TryGetValue(suffixCase, out var suffixEntry))
+            return [];
+
+        return suffixEntry.PropertyMappings.Keys
+            .OrderBy(key => key, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    public string? TryInferCaseFromVerb(string verb)
+    {
+        if (string.IsNullOrWhiteSpace(verb))
+            return null;
+
+        string? inferredCase = null;
+
+        foreach (var (caseName, entry) in _sozluk.Suffixes)
+        {
+            if (!entry.TryResolveVerbMethodName(verb, out _))
+                continue;
+
+            if (inferredCase is null)
+            {
+                inferredCase = caseName;
+                continue;
+            }
+
+            return null;
+        }
+
+        return inferredCase;
+    }
+
+    public string? TryInferCaseFromProperty(string propertyWord)
+    {
+        if (string.IsNullOrWhiteSpace(propertyWord))
+            return null;
+
+        string? inferredCase = null;
+
+        foreach (var (caseName, entry) in _sozluk.Suffixes)
+        {
+            if (!entry.TryResolvePropertyMemberName(propertyWord, out _))
+                continue;
+
+            if (inferredCase is null)
+            {
+                inferredCase = caseName;
+                continue;
+            }
+
+            return null;
+        }
+
+        return inferredCase;
+    }
+
     /// <summary>
     /// Resolves tokens like "90'dan" for natural-language comparisons.
     /// This is implemented in morphology to keep case logic centralized.
@@ -233,8 +350,10 @@ public class SuffixResolver
         return word;
     }
 
-    private string? DetectCaseWithMorphology(string normalizedWord)
+    private string? DetectCaseWithMorphology(string normalizedWord, out string? morphologyFailureMessage)
     {
+        morphologyFailureMessage = null;
+
         try
         {
             var analysis = _morphology.Value.Analyze(normalizedWord);
@@ -255,9 +374,9 @@ public class SuffixResolver
                     return "accusative";
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // Fall back to marker-based detection when morphology resources are unavailable.
+            morphologyFailureMessage = ex.Message;
         }
 
         return null;
