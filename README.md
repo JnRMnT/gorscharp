@@ -33,55 +33,7 @@ dotnet run --project src/GorSharp.CLI -- transpile samples/01-merhaba.gör
 dotnet run --project src/GorSharp.CLI -- run samples/01-merhaba.gör
 ```
 
-## Örnek
-
-```
-// Gör# (merhaba.gör)
-isim: metin "Dünya" olsun;
-sayaç: sayı 5 olsun;
-
-eğer sayaç büyüktür 3 {
-    "Merhaba " yazdır;
-    isim yeniSatıraYazdır;
-} değilse {
-    "Sayaç küçük" yeniSatıraYazdır;
-}
-
-fonksiyon topla(a: sayı, b: sayı): sayı {
-    döndür a + b;
-}
-
-topla(3, 5) yeniSatıraYazdır;
-```
-
-Üretilen Kod:
-
-```csharp
-// C# (merhaba.cs)
-string isim = "Dünya";
-int sayaç = 5;
-
-if (sayaç > 3)
-{
-    Console.Write("Merhaba ");
-    Console.WriteLine(isim);
-}
-else
-{
-    Console.WriteLine("Sayaç küçük");
-}
-
-static int topla(int a, int b)
-{
-    return a + b;
-}
-
-Console.WriteLine(topla(3, 5));
-```
-
-## Tam Doğal Türkçe Akış Örneği
-
-Aşağıdaki örnek, Gör# ile daha doğal bir anlatım akışında kod yazmayı gösterir:
+## Örnek — Doğal Türkçe Akış
 
 ```gör
 öğrenciAdı: metin "Ayşe" olsun;
@@ -115,6 +67,36 @@ döngü kalanHafta büyüktür 0 iken {
 ```
 
 Bu örnekte doğal dil parçacıkları (`iken`, `ve`, `veya`, `evet`) ile C# öğrenimini destekleyen açık bir akış birlikte kullanılır.
+
+## Basit Örnekler — Diğer Söz Dizimi
+
+Gör#'ın doğal Türkçe ifade yeteneğini gösteren kısa örnekler:
+
+```gör
+// Doğal karşılaştırma (ablative numbers)
+puan: sayı 85 olsun;
+eğer puan 80'den büyük veya eşit ise {
+  "Başarılı" yeniSatıraYazdır;
+}
+
+// Doğal mantık operatörleri
+sınav: mantık doğru olsun;
+eğer sınav ve puan 75'den büyük ise {
+  "Geçti" yeniSatıraYazdır;
+}
+
+// Fonksiyonlar
+fonksiyon faktoriyel(n: sayı): sayı {
+  eğer n eşittir 1 {
+    döndür 1;
+  }
+  döndür n * faktoriyel(n - 1);
+}
+
+// Değişken atama (tür çıkarımı)
+sonuç faktoriyel(5) olsun;
+sonuç yeniSatıraYazdır;
+```
 
 ## Özellikler
 

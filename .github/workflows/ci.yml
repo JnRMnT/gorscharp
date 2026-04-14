@@ -73,7 +73,7 @@ jobs:
             echo "Building $proj"
             dotnet build "$proj" --configuration Release --no-restore
           done <<'EOF'
-          src/GorSharp/Core/GorSharp.Core.csproj
+          src/GorSharp.Core/GorSharp.Core.csproj
           src/GorSharp.Parser/GorSharp.Parser.csproj
           playground/GorSharp.Playground.csproj
           EOF
@@ -84,9 +84,13 @@ jobs:
           set -euo pipefail
           while IFS= read -r testproj; do
             echo "Testing $testproj"
-            dotnet test "$testproj" --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory ./TestResults
+            dotnet test "$testproj" --configuration Release --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage" --results-directory ./TestResults
           done <<'EOF'
-          tests/GorSharp.Tests/GorSharp.Tests.csproj
+          tests/GorSharp.Core.Tests/GorSharp.Core.Tests.csproj
+          tests/GorSharp.Morphology.Tests/GorSharp.Morphology.Tests.csproj
+          tests/GorSharp.Parser.Tests/GorSharp.Parser.Tests.csproj
+          tests/GorSharp.Transpiler.Tests/GorSharp.Transpiler.Tests.csproj
+          tests/GorSharp.Integration.Tests/GorSharp.Integration.Tests.csproj
           EOF
 
       - name: Upload test results
