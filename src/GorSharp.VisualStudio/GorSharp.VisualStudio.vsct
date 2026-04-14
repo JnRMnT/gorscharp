@@ -14,7 +14,19 @@
       <Button guid="guidGorSharpCmdSet" id="cmdidConvertCsToGor" priority="0x0100" type="Button">
         <Parent guid="guidGorSharpCmdSet" id="GorSharpGroup" />
         <Strings>
-          <ButtonText>Convert to Gor#</ButtonText>
+          <ButtonText>Gor#'a Dönüştür</ButtonText>
+        </Strings>
+      </Button>
+      <Button guid="guidGorSharpCmdSet" id="cmdidRefreshGeneratedCSharp" priority="0x0110" type="Button">
+        <Parent guid="guidGorSharpCmdSet" id="GorSharpGroup" />
+        <Strings>
+          <ButtonText>Üretilen C# Yenile</ButtonText>
+        </Strings>
+      </Button>
+      <Button guid="guidGorSharpCmdSet" id="cmdidOpenGeneratedCSharp" priority="0x0120" type="Button">
+        <Parent guid="guidGorSharpCmdSet" id="GorSharpGroup" />
+        <Strings>
+          <ButtonText>Üretilen C# Aç</ButtonText>
         </Strings>
       </Button>
     </Buttons>
@@ -26,6 +38,8 @@
     <GuidSymbol name="guidGorSharpCmdSet" value="{b4a74652-5176-4843-94d7-4150185a3f48}">
       <IDSymbol name="GorSharpGroup" value="0x1020" />
       <IDSymbol name="cmdidConvertCsToGor" value="0x0100" />
+      <IDSymbol name="cmdidRefreshGeneratedCSharp" value="0x0101" />
+      <IDSymbol name="cmdidOpenGeneratedCSharp" value="0x0102" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

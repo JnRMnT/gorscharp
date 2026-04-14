@@ -42,7 +42,7 @@ public class GorSharpLanguageClient : ILanguageClient, ILanguageClientCustomMess
 
     public bool ShowNotificationOnInitializeFailed => true;
 
-    public object MiddleLayer => _traceMiddleLayer;
+    public object MiddleLayer => null!;
 
     public object? CustomMessageTarget => null;
 
